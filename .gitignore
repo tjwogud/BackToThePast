@@ -1,7 +1,0 @@
-.vs
-*.bat
-bin
-obj
-Properties
-*.csproj
-*.sln
