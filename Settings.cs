@@ -13,8 +13,15 @@ namespace BackToThePast
                 new XmlSerializer(GetType()).Serialize(writer, this);
         }
 
-        public bool pauseButtons = true;
-        public bool space360Tile = true;
-        public bool noPracticeMode = true;
+        public bool noPracticeMode = false;
+
+        public bool space360Tile = false;
+        public bool legacyTwirl = false;
+
+        public bool disablePurePerfectSound = false;
+        //deathsound is already on game
+        public bool disableWindSound = false;
+
+        public bool legacyFont = false;
     }
 }
