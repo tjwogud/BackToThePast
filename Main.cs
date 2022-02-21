@@ -44,6 +44,7 @@ namespace BackToThePast
             {
                 harmony = new Harmony(modEntry.Info.Id);
                 harmony.PatchAll(Assembly.GetExecutingAssembly());
+                RDString.initialized = false;
             }
             else
             {
@@ -150,10 +151,14 @@ namespace BackToThePast
                 var prev = Settings.legacyFont;
                 Settings.legacyFont = GUILayout.Toggle(Settings.legacyFont,
                    $"{(Settings.legacyFont ? "☑" : "☐")} " +
-                   $"{(RDString.language == SystemLanguage.Korean ? "예전 폰트 사용" : "Use Old Font")}",
+                   $"{(RDString.language == SystemLanguage.Korean ? "옛날 폰트 사용" : "Use Old Font")}",
                    label);
-                if (prev != legacyFont)
-                    RDString.ChangeLanguage(RDString.language);
+                if (prev != Settings.legacyFont)
+                {
+                    RDString.initialized = false;
+                    Persistence.Save();
+                    ADOBase.RestartScene();
+                }
                 GUILayout.EndVertical();
                 GUILayout.EndHorizontal();
             }
