@@ -33,5 +33,6 @@ namespace BackToThePast
         public bool disableEndingSound = false;
 
         public bool legacyFont = false;
+        public bool butNotJudgement = false;
     }
 }

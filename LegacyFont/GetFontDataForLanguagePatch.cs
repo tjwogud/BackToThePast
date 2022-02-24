@@ -1,17 +1,18 @@
 ﻿using HarmonyLib;
+using UnityEngine;
 
 namespace BackToThePast.LegacyFont
 {
     [HarmonyPatch(typeof(RDString), "GetFontDataForLanguage")]
     public static class GetFontDataForLanguagePatch
     {
-        public static void Postfix(ref FontData __result)
+        public static void Postfix(ref FontData __result, SystemLanguage language)
         {
+            if (language == RDString.language)
+                Main.font = __result;
             if (!Main.Settings.legacyFont)
                 return;
-            __result.font = Main.legacyFont;
-            __result.fontScale = 0.85f;
-            __result.lineSpacing = 1.45f;
+            __result = Main.legacyFont;
         }
     }
 }

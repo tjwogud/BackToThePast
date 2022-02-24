@@ -22,7 +22,8 @@ namespace BackToThePast
         public static bool IsEnabled = false;
         public static UnityModManager.ModEntry modEntry;
         public static Settings Settings;
-        public static Font legacyFont;
+        public static FontData legacyFont;
+        public static FontData font;
         public static bool lucky;
 
         public static void Setup(UnityModManager.ModEntry modEntry)
@@ -40,7 +41,11 @@ namespace BackToThePast
             if (bundle == null)
                 throw new Exception("can't load assetbundle!");
             Images.Load(bundle);
-            legacyFont = bundle.LoadAsset<Font>("Same_Mistake - Kopie");
+            legacyFont = new FontData() {
+                font = bundle.LoadAsset<Font>("Same_Mistake - Kopie"),
+                fontScale = 0.85f,
+                lineSpacing = 1.45f
+            };
             Logger.Log("Load Completed!");
             lucky = new System.Random().Next(20) == 0;
         }
@@ -143,6 +148,8 @@ namespace BackToThePast
         private static bool sfx = false;
         private static bool etc = false;
 
+        public static FontData LegacyFont { get => legacyFont; set => legacyFont = value; }
+
         public static void OnGUI(UnityModManager.ModEntry modEntry)
         {
             if (!initialized)
@@ -235,16 +242,25 @@ namespace BackToThePast
                 GUILayout.BeginHorizontal();
                 GUILayout.Space(15);
                 GUILayout.BeginVertical();
-                var prev = Settings.legacyFont;
-                Settings.legacyFont = GUILayout.Toggle(Settings.legacyFont,
-                   $"{(Settings.legacyFont ? "☑" : "☐")} " +
-                   $"{(RDString.language == SystemLanguage.Korean ? "옛날 폰트 사용" : "Use Old Font")}",
-                   label);
-                if (prev != Settings.legacyFont)
+                ShowSetting("legacyFont", false, "옛날 폰트 사용", "Use Old Font", c =>
                 {
                     RDString.initialized = false;
                     Persistence.Save();
                     ADOBase.RestartScene();
+                });
+                if (Settings.legacyFont)
+                {
+                    GUILayout.BeginHorizontal();
+                    GUILayout.Space(10);
+                    GUILayout.BeginVertical();
+                    ShowSetting("butNotJudgement", false, "판정 텍스트엔 적용하지 않기", "But Not For Judgement Text", c =>
+                    {
+                        RDString.initialized = false;
+                        Persistence.Save();
+                        ADOBase.RestartScene();
+                    });
+                    GUILayout.EndVertical();
+                    GUILayout.EndHorizontal();
                 }
                 GUILayout.EndVertical();
                 GUILayout.EndHorizontal();
