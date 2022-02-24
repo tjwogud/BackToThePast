@@ -10,8 +10,8 @@ namespace BackToThePast.LegacyFont
             if (!Main.Settings.legacyFont)
                 return;
             __result.font = Main.legacyFont;
-            __result.fontScale = 0.75f;
-            __result.lineSpacing = 1;
+            __result.fontScale = 0.85f;
+            __result.lineSpacing = 1.45f;
         }
     }
 }

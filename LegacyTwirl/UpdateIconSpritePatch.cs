@@ -1,8 +1,7 @@
-﻿using BackToThePast.Utils;
-using HarmonyLib;
+﻿using HarmonyLib;
 using UnityEngine;
 
-namespace BackToThePast
+namespace BackToThePast.LegacyTwirl
 {
     [HarmonyPatch(typeof(scrFloor), "UpdateIconSprite")]
     public static class UpdateIconSpritePatch
@@ -11,14 +10,14 @@ namespace BackToThePast
         {
             for (int i = 0; i < __instance.transform.childCount; i++)
             {
-                SpriteRenderer renderer = __instance.transform.GetChild(i)?.GetComponent<SpriteRenderer>();
-                if (renderer != null && (renderer.name == "arrow_renderer" || renderer.name == "arrow_outline_renderer"))
+                TwirlRenderer renderer = __instance.transform.GetChild(i).GetComponent<TwirlRenderer>();
+                if (renderer != null)
                 {
                     renderer.transform.parent = null;
-                    Object.Destroy(renderer);
+                    Object.Destroy(renderer.gameObject);
                 }
             }
-            if (!Main.Settings.legacyTwirl || (__instance.floorIcon != FloorIcon.Swirl && __instance.floorIcon != FloorIcon.SwirlCW))
+            if (!Main.Settings.legacyTwirl || __instance.isportal || (__instance.floorIcon != FloorIcon.Swirl && __instance.floorIcon != FloorIcon.SwirlCW))
                 return;
             float num = (float)scrMisc.GetAngleMoved((float)__instance.entryangle, (float)__instance.exitangle, !__instance.isCCW);
             if (Mathf.Abs(num) <= 1E-06f && !__instance.midSpin)
@@ -38,38 +37,32 @@ namespace BackToThePast
             __instance.SetIconOutlineSprite(__instance.isCCW ? Images.swirl_ccw_outline : Images.swirl_cw_outline);
             GameObject arrow_obj = new GameObject();
             arrow_obj.transform.parent = __instance.transform;
-            SpriteRenderer arrow_renderer = arrow_obj.AddComponent<SpriteRenderer>();
-            arrow_renderer.sortingOrder = (__instance.iconsprite ?? __instance.floorRenderer.renderer).sortingOrder + 2;
-            arrow_renderer.sortingLayerID = (__instance.iconsprite ?? __instance.floorRenderer.renderer).sortingLayerID;
-            arrow_renderer.sortingLayerName = (__instance.iconsprite ?? __instance.floorRenderer.renderer).sortingLayerName;
-            arrow_renderer.name = "arrow_renderer";
-            arrow_renderer.sprite = __instance.isCCW ? Images.arrow_ccw : Images.arrow_cw;
-            bool flag = num < 3.1415927f - Mathf.Pow(10f, -6f);
-            arrow_renderer.color = flag ? Color.red : Color.blue;
+            TwirlRenderer arrow = arrow_obj.AddComponent<TwirlRenderer>();
+            arrow.floor = __instance;
+            arrow.renderer.sprite = __instance.isCCW ? Images.arrow_ccw : Images.arrow_cw;
+            arrow.renderer.sortingOrder = (__instance.iconsprite ?? __instance.floorRenderer.renderer).sortingOrder + 2;
+            arrow.renderer.sortingLayerID = (__instance.iconsprite ?? __instance.floorRenderer.renderer).sortingLayerID;
+            arrow.renderer.sortingLayerName = (__instance.iconsprite ?? __instance.floorRenderer.renderer).sortingLayerName;
+            arrow.name = "arrow_renderer";
             Vector3 localPosition = new Vector3(0.3f * Mathf.Cos(num4 + 90 * Mathf.Deg2Rad), 0.3f * Mathf.Sin(num4 + 90 * Mathf.Deg2Rad), 0f);
-            arrow_renderer.transform.localPosition = localPosition;
-            arrow_renderer.transform.localEulerAngles = new Vector3(0f, 0f, num4 * Mathf.Rad2Deg);
+            arrow.transform.localPosition = localPosition;
+            arrow.transform.localEulerAngles = new Vector3(0f, 0f, num4 * Mathf.Rad2Deg);
+            bool flag = num < 3.1415927f - Mathf.Pow(10f, -6f);
+            arrow.renderer.color = flag ? Color.red : Color.blue;
             if (__instance.controller.usingOutlines)
             {
                 GameObject arrow_outline_obj = new GameObject();
                 arrow_outline_obj.transform.parent = __instance.transform;
-                SpriteRenderer arrow_outline_renderer = arrow_outline_obj.AddComponent<SpriteRenderer>();
-                arrow_outline_renderer.sortingOrder = (__instance.iconsprite ?? __instance.floorRenderer.renderer).sortingOrder + 1;
-                arrow_outline_renderer.sortingLayerID = (__instance.iconsprite ?? __instance.floorRenderer.renderer).sortingLayerID;
-                arrow_outline_renderer.sortingLayerName = (__instance.iconsprite ?? __instance.floorRenderer.renderer).sortingLayerName;
-                arrow_outline_renderer.name = "arrow_outline_renderer";
-                arrow_outline_renderer.sprite = __instance.isCCW ? Images.arrow_ccw_outline : Images.arrow_cw_outline;
-                arrow_outline_renderer.transform.localPosition = localPosition;
-                arrow_outline_renderer.transform.localEulerAngles = new Vector3(0f, 0f, num4 * Mathf.Rad2Deg);
+                TwirlRenderer arrow_outline = arrow_outline_obj.AddComponent<TwirlRenderer>();
+                arrow_outline.floor = __instance;
+                arrow_outline.renderer.sprite = __instance.isCCW ? Images.arrow_ccw_outline : Images.arrow_cw_outline;
+                arrow_outline.renderer.sortingOrder = (__instance.iconsprite ?? __instance.floorRenderer.renderer).sortingOrder + 1;
+                arrow_outline.renderer.sortingLayerID = (__instance.iconsprite ?? __instance.floorRenderer.renderer).sortingLayerID;
+                arrow_outline.renderer.sortingLayerName = (__instance.iconsprite ?? __instance.floorRenderer.renderer).sortingLayerName;
+                arrow_outline.name = "arrow_outline_renderer";
+                arrow_outline.transform.localPosition = localPosition;
+                arrow_outline.transform.localEulerAngles = new Vector3(0f, 0f, num4 * Mathf.Rad2Deg);
             }
-        }
-    }
-
-    [HarmonyPatch(typeof(scnEditor), "SelectFloor")]
-    public static class SelectFloorPatch
-    {
-        public static void Postfix(scrFloor floorToSelect)
-        {
         }
     }
 }

@@ -6,6 +6,26 @@ namespace BackToThePast.Utils
 {
     public static class ReflectionUtils
     {
+        public static bool Contains(this object obj, string name)
+        {
+            return obj.GetType().Contains(name);
+        }
+
+        public static bool Contains(this Type type, string name)
+        {
+            return AccessTools.Field(type, name) != null || AccessTools.Property(type, name) != null;
+        }
+
+        public static bool Contains<T>(this object obj, string name)
+        {
+            return obj.GetType().Contains<T>(name);
+        }
+
+        public static bool Contains<T>(this Type type, string name)
+        {
+            return type.Contains(name) && (AccessTools.Field(type, name)?.FieldType ?? AccessTools.Property(type, name)?.PropertyType).IsAssignableFrom(typeof(T));
+        }
+
         public static object Get(this object obj, string name)
         {
             return obj.GetType().Get(name, obj);

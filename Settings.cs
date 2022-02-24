@@ -13,14 +13,24 @@ namespace BackToThePast
                 new XmlSerializer(GetType()).Serialize(writer, this);
         }
 
+        public bool legacyResult = false;
+        public bool noResult = false;
         public bool noPracticeMode = false;
+        public bool hideDifficulty = false;
+        public bool hideNoFail = false;
+        public bool showSmallSpeedChange = false;
+        public bool lateJudgement = false;
 
         public bool space360Tile = false;
         public bool legacyTwirl = false;
+        public bool weakAuto = false;
+        public bool whiteAuto = false;
 
         public bool disablePurePerfectSound = false;
         //deathsound is already on game
         public bool disableWindSound = false;
+        public bool disableCountdownSound = false;
+        public bool disableEndingSound = false;
 
         public bool legacyFont = false;
     }
