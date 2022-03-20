@@ -2,12 +2,10 @@
 using BackToThePast.Utils;
 using HarmonyLib;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -43,7 +41,7 @@ namespace BackToThePast
             Images.Load(bundle);
             legacyFont = new FontData() {
                 font = bundle.LoadAsset<Font>("Same_Mistake - Kopie"),
-                fontScale = 0.85f,
+                fontScale = 0.95f,
                 lineSpacing = 1.45f
             };
             Logger.Log("Load Completed!");
@@ -187,7 +185,18 @@ namespace BackToThePast
                 });
                 ShowSetting("showSmallSpeedChange", false, "작은 속도변화 표시", "Show Small Speed Change");
                 ShowSetting("lateJudgement", false, "판정 텍스트 한타일 앞에 띄우기", "Show Judgement Text On Prev Tile");
+                ShowSetting("forceJudgeCount", false, "판정 텍스트 개수제한 (판정 당)", "Force Judgement Text Count (Per Judgement)");
+                if (Settings.forceJudgeCount)
+                {
+                    GUILayout.BeginHorizontal();
+                    GUILayout.Space(10);
+                    GUILayout.BeginVertical();
+                    ShowSlider("judgeCount", 1, 100);
+                    GUILayout.EndVertical();
+                    GUILayout.EndHorizontal();
+                }
                 GUILayout.EndVertical();
+                GUILayout.FlexibleSpace();
                 GUILayout.EndHorizontal();
             }
 
@@ -296,6 +305,25 @@ namespace BackToThePast
                      $"{((reverse ? !prev : prev) ? "☑" : "☐")} " +
                      $"{(RDString.language == SystemLanguage.Korean ? korean : english)}",
                      label);
+            field.SetValue(instance, current);
+            if (prev != current)
+                onChange?.Invoke(current);
+        }
+
+        private static void ShowSlider(string name, int min, int max, Action<int> onChange = null)
+        {
+            if (!typeof(Settings).Contains<int>(name))
+                throw new ArgumentException("no slider setting named " + name + "!");
+            ShowSlider(Settings, typeof(Settings).GetField(name), min, max, onChange);
+        }
+
+        private static void ShowSlider(object instance, FieldInfo field, int min, int max, Action<int> onChange = null)
+        {
+            int prev = (int)field.GetValue(instance);
+            GUILayout.BeginHorizontal();
+            int current = (int)GUILayout.HorizontalSlider(prev, min, max, GUILayout.Width(200));
+            GUILayout.Label($"{current}", label);
+            GUILayout.EndHorizontal();
             field.SetValue(instance, current);
             if (prev != current)
                 onChange?.Invoke(current);

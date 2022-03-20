@@ -20,6 +20,8 @@ namespace BackToThePast
         public bool hideNoFail = false;
         public bool showSmallSpeedChange = false;
         public bool lateJudgement = false;
+        public bool forceJudgeCount = false;
+        public int judgeCount = 100;
 
         public bool space360Tile = false;
         public bool legacyTwirl = false;
