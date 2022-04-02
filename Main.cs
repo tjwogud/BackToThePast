@@ -1,7 +1,9 @@
 ﻿using BackToThePast.LegacyFont;
 using BackToThePast.Utils;
+using GDMiniJSON;
 using HarmonyLib;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -22,6 +24,8 @@ namespace BackToThePast
         public static Settings Settings;
         public static FontData legacyFont;
         public static FontData font;
+        public static Dictionary<string, object> old_xo;
+        public static AudioClip one_forgotten_night;
         public static bool lucky;
 
         public static void Setup(UnityModManager.ModEntry modEntry)
@@ -44,6 +48,8 @@ namespace BackToThePast
                 fontScale = 0.95f,
                 lineSpacing = 1.45f
             };
+            old_xo = (Dictionary<string, object>)Json.Deserialize(bundle.LoadAsset<TextAsset>("old_xo").text);
+            one_forgotten_night = bundle.LoadAsset<AudioClip>("One forgotten night");
             Logger.Log("Load Completed!");
             lucky = new System.Random().Next(20) == 0;
         }
@@ -150,6 +156,15 @@ namespace BackToThePast
 
         public static void OnGUI(UnityModManager.ModEntry modEntry)
         {
+            if (GUILayout.Button("테스트"))
+            {
+                GCS.sceneToLoad = "scnEditor";
+                GCS.customLevelPaths = new string[1] { "BackToThePast.OldXO" };
+                GCS.speedTrialMode = false;
+                GCS.practiceMode = false;
+                GCS.standaloneLevelMode = true;
+                scrController.instance.StartLoadingScene(WipeDirection.StartsFromRight);
+            }
             if (!initialized)
             {
                 initialized = true;

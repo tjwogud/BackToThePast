@@ -9,7 +9,7 @@ namespace BackToThePast.LegacyResult
     {
         public static void Postfix(scrController __instance)
         {
-            if (Main.Settings.legacyResult && __instance.txtResults.gameObject.activeSelf)
+            if (__instance.gameworld && Main.Settings.legacyResult && __instance.txtResults.gameObject.activeSelf)
             {
 				int resultCount = __instance.mistakesManager.GetHits(HitMargin.Perfect);
 				int resultCount2 = __instance.mistakesManager.GetHits(HitMargin.EarlyPerfect);
