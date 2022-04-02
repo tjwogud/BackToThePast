@@ -9,14 +9,13 @@ namespace BackToThePast.OldXO
     {
         public static bool Prefix(string world, bool instant, bool wipeFirst, scnLevelSelect __instance)
         {
-            if (world == "BackToThePast.SecretIsland")
+            scrPlanet chosenplanet = __instance.controller.chosenplanet;
+            float planetX = chosenplanet.transform.position.x;
+            float planetY = chosenplanet.transform.position.y;
+            Transform transform = chosenplanet.transform;
+            if ((PlayerPrefs.GetInt("BackToThePast.FoundSecretIsland", 0) == 1 && !wipeFirst && world == null && planetX == 0 && planetY == 23) || world == "BackToThePast.SecretIsland")
 			{
-				scrPlanet chosenplanet = __instance.controller.chosenplanet;
-				float planetX = chosenplanet.transform.position.x;
-				float planetY = chosenplanet.transform.position.y;
-				Transform transform = chosenplanet.transform;
 				if (wipeFirst)
-                {
 					scrUIController.instance.WipeToBlack(WipeDirection.StartsFromRight, delegate
 					{
 						__instance.Set("responsive", true);
@@ -29,7 +28,7 @@ namespace BackToThePast.OldXO
                                 chosenplanet.currfloor = component;
                         }
                     });
-				} else
+                else
                 {
                     scrCamera.instance.SetXOffset(0);
                     scrCamera.instance.SetYOffset(0);
@@ -46,6 +45,14 @@ namespace BackToThePast.OldXO
 				return false;
             }
 			return true;
+        }
+
+        public static void Postfix(string world, bool wipeFirst, scnLevelSelect __instance)
+        {
+            scrPlanet chosenplanet = __instance.controller.chosenplanet;
+            float planetX = chosenplanet.transform.position.x;
+            float planetY = chosenplanet.transform.position.y;
+            
         }
     }
 }

@@ -17,7 +17,15 @@ namespace BackToThePast.OldXO
                     FloorUtils.AddEventFloor(0, -3, 5 + i, 23, () => scrCamera.instance.positionState = PositionState.CrownIsland, oldXO.transform).gameObject.AddComponent<FloorHider>();
                 else if (i == 3)
                     FloorUtils.AddEventFloor(0, -3, 5 + i, 23, () => scrCamera.instance.positionState = (PositionState)1001, oldXO.transform).gameObject.AddComponent<FloorHider>();
-                else if (i >= 10)
+                else if (i == 10)
+                    FloorUtils.AddEventFloor(1, 0, 5 + i, 23, () => {
+                        if (PlayerPrefs.GetInt("BackToThePast.FoundSecretIsland", 0) == 0)
+                        {
+                            PlayerPrefs.SetInt("BackToThePast.FoundSecretIsland", 1);
+                            PlayerPrefs.Save();
+                        }
+                    }, oldXO.transform);
+                else if (i > 10)
                     FloorUtils.AddFloor(5 + i, 23, oldXO.transform);
                 else
                     FloorUtils.AddEventFloor(0, -3, 5 + i, 23, null, oldXO.transform).gameObject.AddComponent<FloorHider>();

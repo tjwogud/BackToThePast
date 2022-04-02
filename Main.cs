@@ -156,15 +156,6 @@ namespace BackToThePast
 
         public static void OnGUI(UnityModManager.ModEntry modEntry)
         {
-            if (GUILayout.Button("테스트"))
-            {
-                GCS.sceneToLoad = "scnEditor";
-                GCS.customLevelPaths = new string[1] { "BackToThePast.OldXO" };
-                GCS.speedTrialMode = false;
-                GCS.practiceMode = false;
-                GCS.standaloneLevelMode = true;
-                scrController.instance.StartLoadingScene(WipeDirection.StartsFromRight);
-            }
             if (!initialized)
             {
                 initialized = true;
