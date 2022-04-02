@@ -5,8 +5,10 @@ namespace BackToThePast.OldXO
     [HarmonyPatch(typeof(scrController), "PortalTravelAction")]
     public static class PortalTravelActionPatch
     {
-        public static void Postfix()
+        public static void Postfix(int ___portalDestination)
         {
+            if (___portalDestination != -2)
+                return;
             string current = Persistence.GetSavedCurrentLevel();
             if (current == "BackToThePast.OldXO.default")
             {

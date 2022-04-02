@@ -46,13 +46,5 @@ namespace BackToThePast.OldXO
             }
 			return true;
         }
-
-        public static void Postfix(string world, bool wipeFirst, scnLevelSelect __instance)
-        {
-            scrPlanet chosenplanet = __instance.controller.chosenplanet;
-            float planetX = chosenplanet.transform.position.x;
-            float planetY = chosenplanet.transform.position.y;
-            
-        }
     }
 }

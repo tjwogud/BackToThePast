@@ -156,6 +156,11 @@ namespace BackToThePast
 
         public static void OnGUI(UnityModManager.ModEntry modEntry)
         {
+            if (GUILayout.Button("테스트."))
+            {
+                Main.Logger.Log(GCS.sceneToLoad);
+                Main.Logger.Log(GCS.customLevelPaths[0]);
+            }
             if (!initialized)
             {
                 initialized = true;
