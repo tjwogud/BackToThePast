@@ -22,11 +22,8 @@ namespace BackToThePast.OldXO
 			editor.filenameText.fontStyle = FontStyle.Bold;
 			scrConductor.instance.SetupConductorWithLevelData(__instance.levelData);
 			__instance.RemakePath(true);
-			__instance.UpdateBackgroundSprites();
-			__instance.UpdateDecorationSprites();
 			__instance.UpdateFloorSprites();
 			__instance.SetBackground();
-			__instance.UpdateVideo();
 			__instance.imgHolder.Unload(true);
 			scrConductor.instance.song.clip = Main.one_forgotten_night;
 			DiscordController discordController = DiscordController.instance;

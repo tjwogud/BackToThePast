@@ -1,5 +1,4 @@
-﻿using BackToThePast.LegacyFont;
-using BackToThePast.Utils;
+﻿using BackToThePast.Utils;
 using GDMiniJSON;
 using HarmonyLib;
 using System;
@@ -156,11 +155,6 @@ namespace BackToThePast
 
         public static void OnGUI(UnityModManager.ModEntry modEntry)
         {
-            if (GUILayout.Button("테스트."))
-            {
-                Main.Logger.Log(GCS.sceneToLoad);
-                Main.Logger.Log(GCS.customLevelPaths[0]);
-            }
             if (!initialized)
             {
                 initialized = true;
@@ -181,7 +175,6 @@ namespace BackToThePast
                 GUILayout.BeginVertical();
                 ShowSetting("legacyResult", false, $"결과창 {RDString.Get("status.results." + "early", null)}/{RDString.Get("status.results." + "tooEarly", null)} 위치 교환", $"Change {RDString.Get("status.results." + "early", null)}/{RDString.Get("status.results." + "tooEarly", null)} Position In Result");
                 ShowSetting("noResult", false, "결과창 비활성화", "Disable Result");
-                ShowSetting("noPracticeMode", false, "연습모드 비활성화", "Disable Practice Mode");
                 ShowSetting("hideDifficulty", false, "난이도 설정 비활성화", "Disable Difficulty Setting", c => {
                     if (c)
                         HideDifficulty();
@@ -194,7 +187,9 @@ namespace BackToThePast
                     else
                         ShowNoFail();
                 });
+                ShowSetting("oldPracticeMode", false, "P키로 연습모드", "Enable Practice Mode With P Key");
                 ShowSetting("showSmallSpeedChange", false, "작은 속도변화 표시", "Show Small Speed Change");
+                ShowSetting("noJudgeAnimation", false, "판정 확대 효과 없이 표시", "Show Judgement Without Animation");
                 ShowSetting("lateJudgement", false, "판정 텍스트 한타일 앞에 띄우기", "Show Judgement Text On Prev Tile");
                 ShowSetting("forceJudgeCount", false, "판정 텍스트 개수제한 (판정 당)", "Force Judgement Text Count (Per Judgement)");
                 if (Settings.forceJudgeCount)
@@ -274,6 +269,24 @@ namespace BackToThePast
                     GUILayout.Space(10);
                     GUILayout.BeginVertical();
                     ShowSetting("butNotJudgement", false, "판정 텍스트엔 적용하지 않기", "But Not For Judgement Text", c =>
+                    {
+                        RDString.initialized = false;
+                        Persistence.Save();
+                        ADOBase.RestartScene();
+                    });
+                    ShowSetting("butNotCountdown", false, "카운트다운 텍스트엔 적용하지 않기", "But Not For Countdown Text", c =>
+                    {
+                        RDString.initialized = false;
+                        Persistence.Save();
+                        ADOBase.RestartScene();
+                    });
+                    ShowSetting("butNotTitle", false, "맵 제목엔 적용하지 않기", "But Not For Level Title", c =>
+                    {
+                        RDString.initialized = false;
+                        Persistence.Save();
+                        ADOBase.RestartScene();
+                    });
+                    ShowSetting("butNotSetting", false, "설정 텍스트엔 적용하지 않기", "But Not For Setting Text", c =>
                     {
                         RDString.initialized = false;
                         Persistence.Save();

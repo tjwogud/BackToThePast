@@ -16,6 +16,8 @@ namespace BackToThePast.LegacyTwirl
         {
             if (floor == null)
                 return;
+            if (floor.floorIcon != FloorIcon.Swirl && floor.floorIcon != FloorIcon.SwirlCW)
+                Destroy(this);
             renderer.transform.localScale = floor.transform.localScale;
             renderer.SetAlpha(floor.floorRenderer.color.a * floor.opacity);
         }
