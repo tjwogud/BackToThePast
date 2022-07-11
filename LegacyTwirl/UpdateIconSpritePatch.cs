@@ -27,9 +27,9 @@ namespace BackToThePast.LegacyTwirl
             float num2 = 0f;
             if (__instance.floorRenderer is FloorSpriteRenderer)
             {
-                if (__instance.lm.lm2 == null)
+                if (scrLevelMaker.instance.lm2 == null)
                     __instance.printe("lm2 is null for " + __instance.name);
-                float num3 = __instance.lm.lm2.BigTiles ? -1.5707964f : 1.5707964f;
+                float num3 = scrLevelMaker.instance.lm2.BigTiles ? -1.5707964f : 1.5707964f;
                 num2 = (float)(((scrMisc.mod((float)(__instance.exitangle - __instance.entryangle), 6.2831854820251465) <= 3.1415927410125732) ? __instance.entryangle : __instance.exitangle) - num3);
             }
             float num4 = -(float)__instance.entryangle + 1.5707964f - num / 2f * (__instance.isCCW ? -1 : 1) - 1.5707964f + num2;
@@ -49,7 +49,7 @@ namespace BackToThePast.LegacyTwirl
             arrow.transform.localEulerAngles = new Vector3(0f, 0f, num4 * Mathf.Rad2Deg);
             bool flag = num < 3.1415927f - Mathf.Pow(10f, -6f);
             arrow.renderer.color = flag ? Color.red : Color.blue;
-            if (__instance.controller.usingOutlines)
+            if (scrController.instance.usingOutlines)
             {
                 GameObject arrow_outline_obj = new GameObject();
                 arrow_outline_obj.transform.parent = __instance.transform;

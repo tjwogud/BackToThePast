@@ -9,7 +9,7 @@ namespace BackToThePast.OldXO
     {
         public static bool Prefix(string world, bool instant, bool wipeFirst, scnLevelSelect __instance)
         {
-            scrPlanet chosenplanet = __instance.controller.chosenplanet;
+            scrPlanet chosenplanet = scrController.instance.chosenplanet;
             float planetX = chosenplanet.transform.position.x;
             float planetY = chosenplanet.transform.position.y;
             Transform transform = chosenplanet.transform;

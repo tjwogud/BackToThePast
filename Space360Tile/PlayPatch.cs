@@ -13,11 +13,11 @@ namespace BackToThePast.Space360Tile
             {
                 if (__instance.SelectionIsSingle())
                     __instance.Method("CreateFloorWithCharOrAngle", new object[] {
-                        __instance.lm.GetRotDirection(
-                            __instance.lm.GetRotDirection(
+                        scrLevelMaker.instance.GetRotDirection(
+                            scrLevelMaker.instance.GetRotDirection(
                                 __instance.selectedFloors[0].floatDirection, true), true),
-                        __instance.lm.GetRotDirection(
-                            __instance.lm.GetRotDirection(
+                        scrLevelMaker.instance.GetRotDirection(
+                            scrLevelMaker.instance.GetRotDirection(
                                 __instance.selectedFloors[0].stringDirection, true), true), true, true });
                 return false;
             }

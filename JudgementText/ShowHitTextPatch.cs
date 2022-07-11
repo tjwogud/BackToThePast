@@ -19,7 +19,7 @@ namespace BackToThePast.JudgementText
                     case HitMargin.FailOverload:
                         break;
                     default:
-                        scrFloor floor = __instance.lm.listFloors[__instance.chosenplanet.other.currfloor.seqID - 1];
+                        scrFloor floor = scrLevelMaker.instance.listFloors[__instance.chosenplanet.other.currfloor.seqID - 1];
                         position = floor.transform.position;
                         position.y++;
                         break;

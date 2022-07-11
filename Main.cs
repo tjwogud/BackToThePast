@@ -26,6 +26,9 @@ namespace BackToThePast
         public static Dictionary<string, object> old_xo;
         public static AudioClip one_forgotten_night;
         public static bool lucky;
+        private static PropertyInfo isEditingLevelProperty = typeof(ADOBase).GetProperty("isEditingLevel", BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
+        private static bool adoBaseStatic = isEditingLevelProperty.GetGetMethod().IsStatic;
+        public static bool isEditingLevel => (bool)isEditingLevelProperty.GetValue(adoBaseStatic ? null : scnEditor.instance);
 
         public static void Setup(UnityModManager.ModEntry modEntry)
         {
@@ -60,12 +63,14 @@ namespace BackToThePast
             {
                 harmony = new Harmony(modEntry.Info.Id);
                 harmony.PatchAll(Assembly.GetExecutingAssembly());
+                LegacyResult.OnLandOnPortalPatch.Patch(Settings.legacyResult);
                 RDString.initialized = false;
                 SceneManager.activeSceneChanged += OnChangeScene;
             }
             else
             {
                 harmony.UnpatchAll(modEntry.Info.Id);
+                LegacyResult.OnLandOnPortalPatch.Patch(false);
                 SceneManager.activeSceneChanged -= OnChangeScene;
             }
             return true;
@@ -84,7 +89,7 @@ namespace BackToThePast
             GCS.difficulty = Difficulty.Strict;
             scrUIController instance = scrUIController.instance;
             scnEditor scnEditor = scnEditor.instance;
-            if (scrController.instance != null && scrConductor.instance.isEditingLevel && scnEditor != null)
+            if (scrController.instance != null && isEditingLevel && scnEditor != null)
             {
                 scnEditor.editorDifficultySelector.Method("UpdateDifficultyDisplay");
                 if (scnEditor.editorDifficultySelector.gameObject.activeSelf == true)
@@ -105,7 +110,7 @@ namespace BackToThePast
         {
             scrUIController instance = scrUIController.instance;
             scnEditor scnEditor = scnEditor.instance;
-            if (scrController.instance.isEditingLevel && scnEditor != null)
+            if (isEditingLevel && scnEditor != null)
             {
                 if (scnEditor.editorDifficultySelector.gameObject.activeSelf == false)
                     scnEditor.editorDifficultySelector.gameObject.SetActive(true);
@@ -126,7 +131,7 @@ namespace BackToThePast
             if (scrController.instance != null)
             {
                 scrController.instance.noFail = false;
-                if (scrConductor.instance.isEditingLevel && scnEditor != null)
+                if (isEditingLevel && scnEditor != null)
                 {
                     scnEditor.buttonNoFail.GetComponent<Image>().color = new Color(0.42352942f, 0.42352942f, 0.42352942f);
                     if (scnEditor.buttonNoFail.gameObject.activeSelf == true)
@@ -138,7 +143,7 @@ namespace BackToThePast
         public static void ShowNoFail()
         {
             scnEditor scnEditor = scnEditor.instance;
-            if (scrController.instance != null && scrConductor.instance.isEditingLevel && scnEditor != null && scnEditor.buttonNoFail.gameObject.activeSelf == false)
+            if (scrController.instance != null && isEditingLevel && scnEditor != null && scnEditor.buttonNoFail.gameObject.activeSelf == false)
                 scnEditor.buttonNoFail.gameObject.SetActive(true);
         }
 
@@ -173,7 +178,7 @@ namespace BackToThePast
                 GUILayout.BeginHorizontal();
                 GUILayout.Space(15);
                 GUILayout.BeginVertical();
-                ShowSetting("legacyResult", false, $"결과창 {RDString.Get("status.results." + "early", null)}/{RDString.Get("status.results." + "tooEarly", null)} 위치 교환", $"Change {RDString.Get("status.results." + "early", null)}/{RDString.Get("status.results." + "tooEarly", null)} Position In Result");
+                ShowSetting("legacyResult", false, $"결과창 {RDString.Get("status.results." + "early", null)}/{RDString.Get("status.results." + "tooEarly", null)} 위치 교환", $"Change {RDString.Get("status.results." + "early", null)}/{RDString.Get("status.results." + "tooEarly", null)} Position In Result", LegacyResult.OnLandOnPortalPatch.Patch);
                 ShowSetting("noResult", false, "결과창 비활성화", "Disable Result");
                 ShowSetting("hideDifficulty", false, "난이도 설정 비활성화", "Disable Difficulty Setting", c => {
                     if (c)

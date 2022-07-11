@@ -12,7 +12,7 @@ namespace BackToThePast.ShowSmallSpeedChange
             {
 				float num11;
 				if (__instance.seqID > 0)
-					num11 = __instance.lm.listFloors[__instance.seqID - 1].speed;
+					num11 = scrLevelMaker.instance.listFloors[__instance.seqID - 1].speed;
 				else
 					num11 = 1f;
 				float num12 = (__instance.speed - num11) / num11;
