@@ -28,6 +28,7 @@ namespace BackToThePast
         public bool legacyTwirl = false;
         public bool weakAuto = false;
         public bool whiteAuto = false;
+        public bool legacyTexts = false;
 
         public bool disablePurePerfectSound = false;
         public bool disableWindSound = false;
@@ -39,5 +40,6 @@ namespace BackToThePast
         public bool butNotCountdown = false;
         public bool butNotTitle = false;
         public bool butNotSetting = false;
+        public bool disableAlphaWarning = false;
     }
 }

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -229,6 +230,16 @@ namespace BackToThePast
                 });
                 ShowSetting("weakAuto", false, "오토 약화", "Use Weak Auto");
                 ShowSetting("whiteAuto", false, "흰색 오토 고정", "Always Use White Auto");
+                if (RDString.language == SystemLanguage.Korean)
+                    ShowSetting("legacyTexts", false, "옛날 텍스트 사용 (필터 이름 등)", "", c =>
+                    {
+                        if (scnEditor.instance != null)
+                        {
+                            RDString.initialized = false;
+                            Persistence.Save();
+                            ADOBase.RestartScene();
+                        }
+                    });
                 GUILayout.EndVertical();
                 GUILayout.EndHorizontal();
             }
@@ -245,7 +256,7 @@ namespace BackToThePast
                 GUILayout.BeginVertical();
                 ShowSetting("disablePurePerfectSound", false, "완벽한 플레이 소리 비활성화", "Disable Pure Perfect Sound");
                 ShowSetting("disableWindSound", false, "화면 전환 시 바람소리 비활성화", "Disable Wind Sound When Wipe Screen");
-                ShowSetting(null, typeof(GCS).GetField("playDeathSound"), true, "죽을 시 소리 비활성화", "Disable Death Sound");
+                ShowSetting<GCS>(null, "playDeathSound", true, "죽을 시 소리 비활성화", "Disable Death Sound");
                 ShowSetting("disableCountdownSound", false, "카운트다운 소리 비활성화", "Disable Countdown Sound");
                 ShowSetting("disableEndingSound", false, "클리어 소리 비활성화", "Disable Clear Sound");
                 GUILayout.EndVertical();
@@ -300,6 +311,7 @@ namespace BackToThePast
                     GUILayout.EndVertical();
                     GUILayout.EndHorizontal();
                 }
+                ShowSetting("disableAlphaWarning", false, "알파 버젼에서의 시작 시 경고창을 띄우지 않기", "Disable Alpha's Start Warning");
                 GUILayout.EndVertical();
                 GUILayout.EndHorizontal();
             }
@@ -324,17 +336,17 @@ namespace BackToThePast
         {
             if (!typeof(Settings).Contains<bool>(name))
                 throw new ArgumentException("no setting named " + name + "!");
-            ShowSetting(Settings, typeof(Settings).GetField(name), reverse, korean, english, onChange);
+            ShowSetting<Settings>(Settings, name, reverse, korean, english, onChange);
         }
 
-        private static void ShowSetting(object instance, FieldInfo field, bool reverse, string korean, string english, Action<bool> onChange = null)
+        private static void ShowSetting<T>(object instance, string name, bool reverse, string korean, string english, Action<bool> onChange = null)
         {
-            bool prev = (bool)field.GetValue(instance);
+            bool prev = (bool)GetValue<T>(instance, name);
             bool current = GUILayout.Toggle(prev,
                      $"{((reverse ? !prev : prev) ? "☑" : "☐")} " +
                      $"{(RDString.language == SystemLanguage.Korean ? korean : english)}",
                      label);
-            field.SetValue(instance, current);
+            SetValue<T>(instance, name, current);
             if (prev != current)
                 onChange?.Invoke(current);
         }
@@ -343,19 +355,60 @@ namespace BackToThePast
         {
             if (!typeof(Settings).Contains<int>(name))
                 throw new ArgumentException("no slider setting named " + name + "!");
-            ShowSlider(Settings, typeof(Settings).GetField(name), min, max, onChange);
+            ShowSlider<Settings>(Settings, name, min, max, onChange);
         }
 
-        private static void ShowSlider(object instance, FieldInfo field, int min, int max, Action<int> onChange = null)
+        private static void ShowSlider<T>(object instance, string name, int min, int max, Action<int> onChange = null)
         {
-            int prev = (int)field.GetValue(instance);
+            int prev = (int)GetValue<T>(instance, name);
             GUILayout.BeginHorizontal();
             int current = (int)GUILayout.HorizontalSlider(prev, min, max, GUILayout.Width(200));
             GUILayout.Label($"{current}", label);
             GUILayout.EndHorizontal();
-            field.SetValue(instance, current);
+            SetValue<T>(instance, name, current);
             if (prev != current)
                 onChange?.Invoke(current);
+        }
+
+        private static readonly Dictionary<(Type, string), Delegate> getters = new Dictionary<(Type, string), Delegate>();
+        private static readonly Dictionary<(Type, string), Delegate> setters = new Dictionary<(Type, string), Delegate>();
+
+        private static object GetValue<T>(object instance, string name)
+        {
+            return CreateGetter(typeof(T), name).DynamicInvoke(instance);
+        }
+
+        private static object SetValue<T>(object instance, string name, object obj)
+        {
+            return CreateSetter(typeof(T), name).DynamicInvoke(instance, obj);
+        }
+
+        private static Delegate CreateGetter(Type type, string name)
+        {
+            if (getters.TryGetValue((type, name), out Delegate value))
+                return value;
+            var field = AccessTools.Field(type, name) ?? throw new ArgumentException();
+            var instanceExp = Expression.Parameter(type, "instance");
+            var fieldExp = Expression.Field(field.IsStatic ? null : instanceExp, field);
+            var expr = Expression.Lambda(fieldExp, instanceExp);
+            var getter = expr.Compile();
+            getters.Add((type, name), getter);
+            return getter;
+        }
+
+        private static Delegate CreateSetter(Type type, string name)
+        {
+            if (setters.TryGetValue((type, name), out Delegate value))
+                return value;
+            var field = AccessTools.Field(type, name) ?? throw new ArgumentException();
+            var instanceExp = Expression.Parameter(type, "instance");
+            var valueExp = Expression.Parameter(field.FieldType, "value");
+            var fieldExp = Expression.Field(field.IsStatic ? null : instanceExp, field);
+            var assignExp = Expression.Assign(fieldExp, valueExp);
+            var expr = Expression.Lambda(assignExp, instanceExp, valueExp);
+            var setter = expr.Compile();
+            setters.Add((type, name), setter);
+            return setter;
         }
 
         private static void OnSaveGUI(UnityModManager.ModEntry modEntry)
