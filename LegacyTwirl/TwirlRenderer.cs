@@ -6,10 +6,11 @@ namespace BackToThePast.LegacyTwirl
     {
         public SpriteRenderer renderer;
         public scrFloor floor;
+        public bool outline;
 
         public void Awake()
         {
-            renderer = gameObject.AddComponent<SpriteRenderer>();
+            renderer = gameObject.GetOrAddComponent<SpriteRenderer>();
         }
 
         public void LateUpdate()
@@ -18,6 +19,7 @@ namespace BackToThePast.LegacyTwirl
                 return;
             if (floor.floorIcon != FloorIcon.Swirl && floor.floorIcon != FloorIcon.SwirlCW)
                 Destroy(this);
+            renderer.sortingOrder = (floor.iconsprite ?? floor.floorRenderer.renderer).sortingOrder + (outline ? 1 : 2);
             renderer.transform.localScale = floor.transform.localScale;
             renderer.SetAlpha(floor.floorRenderer.color.a * floor.opacity);
         }
