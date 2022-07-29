@@ -98,8 +98,13 @@ namespace BackToThePast
             }
             else if (instance != null)
             {
-                scrUIController.instance?.Set("currentDifficultyIndex", 2);
-                scrUIController.instance?.Method("UpdateDifficultyUI");
+                if (AccessTools.Field(typeof(scrUIController), "currentDifficultyIndex") != null)
+                {
+                    instance.Set("currentDifficultyIndex", 2);
+                    instance.Method("UpdateDifficultyUI");
+                } else
+                    instance.Method("UpdateDifficultyUI", new object[] { Difficulty.Strict });
+                GCS.difficulty = Difficulty.Strict;
                 if (instance.difficultyContainer.gameObject.activeSelf == true)
                     instance.difficultyContainer.gameObject.SetActive(false);
                 if (instance.difficultyFadeContainer.gameObject.activeSelf == true)

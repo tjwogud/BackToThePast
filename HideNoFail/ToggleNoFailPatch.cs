@@ -8,7 +8,7 @@ namespace BackToThePast.HideNoFail
     {
         public static MethodBase TargetMethod()
         {
-            return AccessTools.Method(typeof(scnCLS), "ToggleNoFail") ?? AccessTools.Method(typeof(OptionsPanelsCLS), "ToggleNoFail");
+            return AccessTools.Method(typeof(scnCLS), "ToggleNoFail") ?? AccessTools.Method(typeof(ADOBase).Assembly.GetType("OptionsPanelsCLS"), "ToggleNoFail");
         }
 
         public static bool Prefix()

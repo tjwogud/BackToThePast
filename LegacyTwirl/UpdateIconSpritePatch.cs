@@ -8,8 +8,8 @@ namespace BackToThePast.LegacyTwirl
     {
         public static void Postfix(scrFloor __instance)
         {
-            Object.DestroyImmediate(__instance.transform.Find("arrow_renderer"));
-            Object.DestroyImmediate(__instance.transform.Find("arrow_outline_renderer"));
+            Object.DestroyImmediate(__instance.transform.Find("arrow_renderer")?.gameObject);
+            Object.DestroyImmediate(__instance.transform.Find("arrow_outline_renderer")?.gameObject);
             if (!Main.Settings.legacyTwirl || __instance.isportal || (__instance.floorIcon != FloorIcon.Swirl && __instance.floorIcon != FloorIcon.SwirlCW))
                 return;
             float num = (float)scrMisc.GetAngleMoved((float)__instance.entryangle, (float)__instance.exitangle, !__instance.isCCW);
