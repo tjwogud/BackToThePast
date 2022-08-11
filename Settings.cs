@@ -28,6 +28,8 @@ namespace BackToThePast
         public bool legacyTwirl = false;
         public bool weakAuto = false;
         public bool whiteAuto = false;
+        public bool legacyEditorButtonsPositions = false;
+        public bool legacyEditorButtonsDesigns = false;
         public bool legacyTexts = false;
 
         public bool disablePurePerfectSound = false;

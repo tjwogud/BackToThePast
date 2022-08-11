@@ -153,6 +153,120 @@ namespace BackToThePast
                 scnEditor.buttonNoFail.gameObject.SetActive(true);
         }
 
+        private static bool inited = false;
+
+        private static (float, float) originalAutoPosition;
+        private static (float, float) originalNofailPosition;
+        private static (float, float) originalDifficultyPosition;
+
+        private static (float, float) originalAutoOffsetMax;
+        private static (float, float) originalNofailOffsetMax;
+        private static (float, float) originalDifficultyOffsetMax;
+
+        private static (float, float) originalAutoOffsetMin;
+        private static (float, float) originalNofailOffsetMin;
+        private static (float, float) originalDifficultyOffsetMin;
+
+        private static (float, float) originalNofailPivot;
+        private static (float, float, float, float) originalNofailRect;
+
+        public static void ChangeEditorButtons(bool change)
+        {
+            scnEditor scnEditor = scnEditor.instance;
+            if (scnEditor == null)
+                return;
+            RectTransform auto = scnEditor.autoImage.GetComponent<RectTransform>();
+            RectTransform nofail = scnEditor.buttonNoFail.GetComponent<RectTransform>();
+            RectTransform difficulty = scnEditor.editorDifficultySelector.GetComponent<RectTransform>();
+            if (change)
+            {
+                if (!inited)
+                {
+                    originalAutoPosition = (auto.offsetMin.x, auto.offsetMin.y);
+                    originalNofailPosition = (nofail.offsetMin.x, nofail.offsetMin.y);
+                    originalDifficultyPosition = (difficulty.offsetMin.x, difficulty.offsetMin.y);
+
+                    originalAutoOffsetMax = (auto.offsetMax.x, auto.offsetMax.y);
+                    originalNofailOffsetMax = (nofail.offsetMax.x, nofail.offsetMax.y);
+                    originalDifficultyOffsetMax = (difficulty.offsetMax.x, difficulty.offsetMax.y);
+
+                    originalAutoOffsetMin = (auto.offsetMin.x, auto.offsetMin.y);
+                    originalNofailOffsetMin = (nofail.offsetMin.x, nofail.offsetMin.y);
+                    originalDifficultyOffsetMin = (difficulty.offsetMin.x, difficulty.offsetMin.y);
+
+                    originalNofailPivot = (nofail.pivot.x, nofail.pivot.y);
+                    originalNofailRect = (nofail.rect.x, nofail.rect.y, nofail.rect.width, nofail.rect.height);
+                    inited = true;
+                }
+                nofail.pivot = new Vector2(0.5f, 0.5f);
+                Rect rect = nofail.rect;
+                rect.x = -29.5f;
+                rect.y = -30;
+                rect.width = 59;
+                rect.height = 60;
+
+                auto.anchoredPosition = new Vector2(-15, 15);
+                nofail.anchoredPosition = new Vector2(-52, 125);
+                difficulty.anchoredPosition = new Vector2(-15, 10);
+
+                auto.offsetMax = new Vector2(-15, 95);
+                nofail.offsetMax = new Vector2(-22.5f, 155);
+                difficulty.offsetMax = new Vector2(-15, 118);
+
+                auto.offsetMin = new Vector2(-95, 15);
+                nofail.offsetMin = new Vector2(-81.5f, 95);
+                difficulty.offsetMin = new Vector2(-200, 10);
+            }
+            else
+            {
+                if (!inited)
+                    return;
+                nofail.pivot = new Vector2(originalNofailPivot.Item1, originalNofailPivot.Item2);
+                Rect rect = nofail.rect;
+                rect.x = originalNofailRect.Item1;
+                rect.y = originalNofailRect.Item2;
+                rect.width = originalNofailRect.Item3;
+                rect.height = originalNofailRect.Item4;
+
+                auto.anchoredPosition = new Vector2(originalAutoPosition.Item1, originalAutoPosition.Item2);
+                nofail.anchoredPosition = new Vector2(originalNofailPosition.Item1, originalNofailPosition.Item2);
+                difficulty.anchoredPosition = new Vector2(originalDifficultyPosition.Item1, originalDifficultyPosition.Item2);
+
+                auto.offsetMax = new Vector2(originalAutoOffsetMax.Item1, originalAutoOffsetMax.Item2);
+                nofail.offsetMax = new Vector2(originalNofailOffsetMax.Item1, originalNofailOffsetMax.Item2);
+                difficulty.offsetMax = new Vector2(originalDifficultyOffsetMax.Item1, originalDifficultyOffsetMax.Item2);
+
+                auto.offsetMin = new Vector2(originalAutoOffsetMin.Item1, originalAutoOffsetMin.Item2);
+                nofail.offsetMin = new Vector2(originalNofailOffsetMin.Item1, originalNofailOffsetMin.Item2);
+                difficulty.offsetMin = new Vector2(originalDifficultyOffsetMin.Item1, originalDifficultyOffsetMin.Item2);
+            }
+        }
+
+        public static void RemoveShadowAddOutline(bool rsao)
+        {
+            scnEditor scnEditor = scnEditor.instance;
+            if (scnEditor == null)
+                return;
+            GameObject auto = scnEditor.autoImage.gameObject;
+            GameObject nofail = scnEditor.buttonNoFail.gameObject;
+            if (auto.GetComponent<Shadow>() is Outline)
+                return;
+            if (rsao)
+            {
+                auto.GetComponent<Shadow>().enabled = false;
+                auto.GetOrAddComponent<Outline>().effectColor = Color.black;
+                nofail.GetComponent<Shadow>().enabled = false;
+                nofail.GetOrAddComponent<Outline>().effectColor = Color.black;
+            }
+            else
+            {
+                UnityEngine.Object.Destroy(auto.GetComponent<Outline>());
+                auto.GetComponent<Shadow>().enabled = true;
+                UnityEngine.Object.Destroy(nofail.GetComponent<Outline>());
+                nofail.GetComponent<Shadow>().enabled = true;
+            }
+        }
+
         private static bool initialized = false;
 
         private static GUIStyle label;
@@ -235,6 +349,8 @@ namespace BackToThePast
                 });
                 ShowSetting("weakAuto", false, "오토 약화", "Use Weak Auto");
                 ShowSetting("whiteAuto", false, "흰색 오토 고정", "Always Use White Auto");
+                ShowSetting("legacyEditorButtonsPositions", false, "오토, 무적모드, 난이도 아이콘 위치 조정", "Change Positions Of Auto, No Fail, Difficulty Icons", ChangeEditorButtons);
+                ShowSetting("legacyEditorButtonsDesigns", false, "옛날 오토, 무적모드 아이콘 사용 (그림자 제거, 테두리 추가)", "Use Legacy Auto, No Fail Icons (Remove Shadow, Add Outline)", RemoveShadowAddOutline);
                 if (RDString.language == SystemLanguage.Korean)
                     ShowSetting("legacyTexts", false, "옛날 텍스트 사용 (필터 이름 등)", "", c =>
                     {
@@ -339,81 +455,36 @@ namespace BackToThePast
 
         private static void ShowSetting(string name, bool reverse, string korean, string english, Action<bool> onChange = null)
         {
-            if (!typeof(Settings).Contains<bool>(name))
-                throw new ArgumentException("no setting named " + name + "!");
             ShowSetting<Settings>(Settings, name, reverse, korean, english, onChange);
         }
 
         private static void ShowSetting<T>(object instance, string name, bool reverse, string korean, string english, Action<bool> onChange = null)
         {
-            bool prev = (bool)GetValue<T>(instance, name);
+            bool prev = typeof(T).Get<bool>(name, instance);
             bool current = GUILayout.Toggle(prev,
                      $"{((reverse ? !prev : prev) ? "☑" : "☐")} " +
                      $"{(RDString.language == SystemLanguage.Korean ? korean : english)}",
                      label);
-            SetValue<T>(instance, name, current);
+            typeof(T).Set(name, current, instance);
             if (prev != current)
                 onChange?.Invoke(current);
         }
 
         private static void ShowSlider(string name, int min, int max, Action<int> onChange = null)
         {
-            if (!typeof(Settings).Contains<int>(name))
-                throw new ArgumentException("no slider setting named " + name + "!");
             ShowSlider<Settings>(Settings, name, min, max, onChange);
         }
 
         private static void ShowSlider<T>(object instance, string name, int min, int max, Action<int> onChange = null)
         {
-            int prev = (int)GetValue<T>(instance, name);
+            int prev = typeof(T).Get<int>(name, instance);
             GUILayout.BeginHorizontal();
             int current = (int)GUILayout.HorizontalSlider(prev, min, max, GUILayout.Width(200));
             GUILayout.Label($"{current}", label);
             GUILayout.EndHorizontal();
-            SetValue<T>(instance, name, current);
+            typeof(T).Set(name, current, instance);
             if (prev != current)
                 onChange?.Invoke(current);
-        }
-
-        private static readonly Dictionary<(Type, string), Delegate> getters = new Dictionary<(Type, string), Delegate>();
-        private static readonly Dictionary<(Type, string), Delegate> setters = new Dictionary<(Type, string), Delegate>();
-
-        private static object GetValue<T>(object instance, string name)
-        {
-            return CreateGetter(typeof(T), name).DynamicInvoke(instance);
-        }
-
-        private static object SetValue<T>(object instance, string name, object obj)
-        {
-            return CreateSetter(typeof(T), name).DynamicInvoke(instance, obj);
-        }
-
-        private static Delegate CreateGetter(Type type, string name)
-        {
-            if (getters.TryGetValue((type, name), out Delegate value))
-                return value;
-            var field = AccessTools.Field(type, name) ?? throw new ArgumentException();
-            var instanceExp = Expression.Parameter(type, "instance");
-            var fieldExp = Expression.Field(field.IsStatic ? null : instanceExp, field);
-            var expr = Expression.Lambda(fieldExp, instanceExp);
-            var getter = expr.Compile();
-            getters.Add((type, name), getter);
-            return getter;
-        }
-
-        private static Delegate CreateSetter(Type type, string name)
-        {
-            if (setters.TryGetValue((type, name), out Delegate value))
-                return value;
-            var field = AccessTools.Field(type, name) ?? throw new ArgumentException();
-            var instanceExp = Expression.Parameter(type, "instance");
-            var valueExp = Expression.Parameter(field.FieldType, "value");
-            var fieldExp = Expression.Field(field.IsStatic ? null : instanceExp, field);
-            var assignExp = Expression.Assign(fieldExp, valueExp);
-            var expr = Expression.Lambda(assignExp, instanceExp, valueExp);
-            var setter = expr.Compile();
-            setters.Add((type, name), setter);
-            return setter;
         }
 
         private static void OnSaveGUI(UnityModManager.ModEntry modEntry)

@@ -2,7 +2,7 @@
 
 namespace BackToThePast.Utils
 {
-    public static class LoggerUtils
+    public static class LoggerExtensions
     {
         public static void Log(this UnityModManager.ModEntry.ModLogger logger, object obj)
         {
