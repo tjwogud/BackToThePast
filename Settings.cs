@@ -19,13 +19,15 @@ namespace BackToThePast
         public bool hideNoFail = false;
         public bool oldPracticeMode = false;
         public bool showSmallSpeedChange = false;
+        public bool legacyFlash = false;
         public bool noJudgeAnimation = false;
         public bool lateJudgement = false;
         public bool forceJudgeCount = false;
-        public int judgeCount = 100;
+            public int judgeCount = 100;
+        public bool legacyTwirl = false;
+            public bool twirlWithoutArrow = false;
 
         public bool space360Tile = false;
-        public bool legacyTwirl = false;
         public bool weakAuto = false;
         public bool whiteAuto = false;
         public bool legacyEditorButtonsPositions = false;
@@ -38,10 +40,10 @@ namespace BackToThePast
         public bool disableEndingSound = false;
 
         public bool legacyFont = false;
-        public bool butNotJudgement = false;
-        public bool butNotCountdown = false;
-        public bool butNotTitle = false;
-        public bool butNotSetting = false;
+            public bool butNotJudgement = false;
+            public bool butNotCountdown = false;
+            public bool butNotTitle = false;
+            public bool butNotSetting = false;
         public bool disableAlphaWarning = false;
     }
 }

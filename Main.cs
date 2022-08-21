@@ -1,12 +1,11 @@
 ﻿using BackToThePast.Utils;
 using GDMiniJSON;
 using HarmonyLib;
+using Localizations;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Linq.Expressions;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -20,20 +19,21 @@ namespace BackToThePast
         public static UnityModManager.ModEntry.ModLogger Logger;
         public static Harmony harmony;
         public static bool IsEnabled = false;
-        public static UnityModManager.ModEntry modEntry;
+        public static UnityModManager.ModEntry ModEntry;
         public static Settings Settings;
+        public static Localization Localization;
         public static FontData legacyFont;
         public static FontData font;
         public static Dictionary<string, object> old_xo;
         public static AudioClip one_forgotten_night;
         public static bool lucky;
-        private static PropertyInfo isEditingLevelProperty = typeof(ADOBase).GetProperty("isEditingLevel", BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
-        private static bool adoBaseStatic = isEditingLevelProperty.GetGetMethod().IsStatic;
-        public static bool isEditingLevel => (bool)isEditingLevelProperty.GetValue(adoBaseStatic ? null : scnEditor.instance);
+        private static readonly PropertyInfo isEditingLevelProperty = typeof(ADOBase).GetProperty("isEditingLevel", BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
+        private static readonly bool adoBaseStatic = isEditingLevelProperty.GetGetMethod().IsStatic;
+        public static bool isEditingLevel => (bool)isEditingLevelProperty.GetValue(adoBaseStatic ? null : scrController.instance);
 
         public static void Setup(UnityModManager.ModEntry modEntry)
         {
-            Main.modEntry = modEntry;
+            ModEntry = modEntry;
             Logger = modEntry.Logger;
             modEntry.OnToggle = OnToggle;
             modEntry.OnGUI = OnGUI;
@@ -54,6 +54,7 @@ namespace BackToThePast
             old_xo = (Dictionary<string, object>)Json.Deserialize(bundle.LoadAsset<TextAsset>("old_xo").text);
             one_forgotten_night = bundle.LoadAsset<AudioClip>("One forgotten night");
             Logger.Log("Load Completed!");
+            Localization = Localization.Load(modEntry, "1QcrRL6LAs8WxJj_hFsEJa3CLM5g3e8Ya0KQlRKXwdlU", 343830105);
             lucky = new System.Random().Next(20) == 0;
         }
 
@@ -280,6 +281,16 @@ namespace BackToThePast
 
         public static void OnGUI(UnityModManager.ModEntry modEntry)
         {
+            if (Localization.Failed)
+            {
+                GUILayout.Label("Can't load localizations! Try restart the game.");
+                return;
+            }
+            if (!Localization.Loaded)
+            {
+                GUILayout.Label("Localizations are not loaded yet! Please wait...");
+                return;
+            }
             if (!initialized)
             {
                 initialized = true;
@@ -291,68 +302,69 @@ namespace BackToThePast
 
             play = GUILayout.Toggle(play,
                 $"{(play ? "▼" : "▶")} " +
-                $"{(RDString.language == SystemLanguage.Korean ? "플레이" : "Play")}",
+                $"{Localization["bttp.settings.play"]}",
                 label);
             if (play)
             {
                 GUILayout.BeginHorizontal();
                 GUILayout.Space(15);
                 GUILayout.BeginVertical();
-                ShowSetting("legacyResult", false, $"결과창 {RDString.Get("status.results." + "early", null)}/{RDString.Get("status.results." + "tooEarly", null)} 위치 교환", $"Change {RDString.Get("status.results." + "early", null)}/{RDString.Get("status.results." + "tooEarly", null)} Position In Result", LegacyResult.OnLandOnPortalPatch.Patch);
-                ShowSetting("noResult", false, "결과창 비활성화", "Disable Result");
-                ShowSetting("hideDifficulty", false, "난이도 설정 비활성화", "Disable Difficulty Setting", c => {
+                ShowSetting(() => Settings.legacyResult, b => Settings.legacyResult = b, "legacyResult", LegacyResult.OnLandOnPortalPatch.Patch);
+                ShowSetting(() => Settings.noResult, b => Settings.noResult = b, "noResult");
+                ShowSetting(() => Settings.hideDifficulty, b => Settings.hideDifficulty = b, "hideDifficulty", c => {
                     if (c)
                         HideDifficulty();
                     else
                         ShowDifficulty();
                 });
-                ShowSetting("hideNoFail", false, "무적모드 비활성화", "Disable No Fail Mode", c => {
+                ShowSetting(() => Settings.hideNoFail, b => Settings.hideNoFail = b, "hideNoFail", c => {
                     if (c)
                         HideNoFail();
                     else
                         ShowNoFail();
                 });
-                ShowSetting("oldPracticeMode", false, "P키로 연습모드", "Enable Practice Mode With P Key");
-                ShowSetting("showSmallSpeedChange", false, "작은 속도변화 표시", "Show Small Speed Change");
-                ShowSetting("noJudgeAnimation", false, "판정 확대 효과 없이 표시", "Show Judgement Without Animation");
-                ShowSetting("lateJudgement", false, "판정 텍스트 한타일 앞에 띄우기", "Show Judgement Text On Prev Tile");
-                ShowSetting("forceJudgeCount", false, "판정 텍스트 개수제한 (판정 당)", "Force Judgement Text Count (Per Judgement)");
+                ShowSetting(() => Settings.oldPracticeMode, b => Settings.oldPracticeMode = b, "oldPracticeMode");
+                ShowSetting(() => Settings.showSmallSpeedChange, b => Settings.showSmallSpeedChange = b, "showSmallSpeedChange");
+                ShowSetting(() => Settings.legacyFlash, b => Settings.legacyFlash = b, "legacyFlash");
+                ShowSetting(() => Settings.noJudgeAnimation, b => Settings.noJudgeAnimation = b, "noJudgeAnimation");
+                ShowSetting(() => Settings.lateJudgement, b => Settings.lateJudgement = b, "lateJudgement");
+                ShowSetting(() => Settings.forceJudgeCount, b => Settings.forceJudgeCount = b, "forceJudgeCount");
                 if (Settings.forceJudgeCount)
                 {
                     GUILayout.BeginHorizontal();
                     GUILayout.Space(10);
-                    GUILayout.BeginVertical();
-                    ShowSlider("judgeCount", 1, 100);
-                    GUILayout.EndVertical();
+                    ShowIntSlider(() => Settings.judgeCount, i => Settings.judgeCount = i, 1, 100);
+                    GUILayout.EndHorizontal();
+                }
+                ShowSetting(() => Settings.legacyTwirl, b => Settings.legacyTwirl = b, "legacyTwirl", c => scnEditor.instance?.ApplyEventsToFloors());
+                if (Settings.legacyTwirl)
+                {
+                    GUILayout.BeginHorizontal();
+                    GUILayout.Space(10);
+                    ShowSetting(() => Settings.twirlWithoutArrow, b => Settings.twirlWithoutArrow = b, "twirlWithoutArrow", c => scnEditor.instance?.ApplyEventsToFloors());
                     GUILayout.EndHorizontal();
                 }
                 GUILayout.EndVertical();
-                GUILayout.FlexibleSpace();
                 GUILayout.EndHorizontal();
             }
 
             GUILayout.Space(10);
             editor = GUILayout.Toggle(editor,
                 $"{(editor ? "▼" : "▶")} " +
-                $"{(RDString.language == SystemLanguage.Korean ? "에디터" : "Editor")}",
+                $"{Localization["bttp.settings.editor"]}",
                 label);
             if (editor)
             {
                 GUILayout.BeginHorizontal();
                 GUILayout.Space(15);
                 GUILayout.BeginVertical();
-                ShowSetting("space360Tile", false, "스페이스바로 유턴 타일 생성", "Create 360 Tile With Space");
-                ShowSetting("legacyTwirl", false, "옛날 소용돌이 사용", "Use Old Twirl", c =>
-                {
-                    if (scnEditor.instance != null)
-                        scnEditor.instance.ApplyEventsToFloors();
-                });
-                ShowSetting("weakAuto", false, "오토 약화", "Use Weak Auto");
-                ShowSetting("whiteAuto", false, "흰색 오토 고정", "Always Use White Auto");
-                ShowSetting("legacyEditorButtonsPositions", false, "오토, 무적모드, 난이도 아이콘 위치 조정", "Change Positions Of Auto, No Fail, Difficulty Icons", ChangeEditorButtons);
-                ShowSetting("legacyEditorButtonsDesigns", false, "옛날 오토, 무적모드 아이콘 사용 (그림자 제거, 테두리 추가)", "Use Legacy Auto, No Fail Icons (Remove Shadow, Add Outline)", RemoveShadowAddOutline);
+                ShowSetting(() => Settings.space360Tile, b => Settings.space360Tile = b, "space360Tile");
+                ShowSetting(() => Settings.weakAuto, b => Settings.weakAuto = b, "weakAuto");
+                ShowSetting(() => Settings.whiteAuto, b => Settings.whiteAuto = b, "whiteAuto");
+                ShowSetting(() => Settings.legacyEditorButtonsPositions, b => Settings.legacyEditorButtonsPositions = b, "legacyEditorButtonsPositions", ChangeEditorButtons);
+                ShowSetting(() => Settings.legacyEditorButtonsDesigns, b => Settings.legacyEditorButtonsDesigns = b, "legacyEditorButtonsDesigns", RemoveShadowAddOutline);
                 if (RDString.language == SystemLanguage.Korean)
-                    ShowSetting("legacyTexts", false, "옛날 텍스트 사용 (필터 이름 등)", "", c =>
+                    ShowSetting(() => Settings.legacyTexts, b => Settings.legacyTexts = b, "legacyTexts", c =>
                     {
                         if (scnEditor.instance != null)
                         {
@@ -368,18 +380,18 @@ namespace BackToThePast
             GUILayout.Space(10);
             sfx = GUILayout.Toggle(sfx,
                 $"{(sfx ? "▼" : "▶")} " +
-                $"{(RDString.language == SystemLanguage.Korean ? "효과음" : "Sfx")}",
+                $"{Localization["bttp.settings.sfx"]}",
                 label);
             if (sfx)
             {
                 GUILayout.BeginHorizontal();
                 GUILayout.Space(15);
                 GUILayout.BeginVertical();
-                ShowSetting("disablePurePerfectSound", false, "완벽한 플레이 소리 비활성화", "Disable Pure Perfect Sound");
-                ShowSetting("disableWindSound", false, "화면 전환 시 바람소리 비활성화", "Disable Wind Sound When Wipe Screen");
-                ShowSetting<GCS>(null, "playDeathSound", true, "죽을 시 소리 비활성화", "Disable Death Sound");
-                ShowSetting("disableCountdownSound", false, "카운트다운 소리 비활성화", "Disable Countdown Sound");
-                ShowSetting("disableEndingSound", false, "클리어 소리 비활성화", "Disable Clear Sound");
+                ShowSetting(() => Settings.disablePurePerfectSound, b => Settings.disablePurePerfectSound = b, "disablePurePerfectSound");
+                ShowSetting(() => Settings.disableWindSound, b => Settings.disableWindSound = b, "disableWindSound");
+                ShowSetting(() => !GCS.playDeathSound, b => GCS.playDeathSound = !b, "disableDeathSound");
+                ShowSetting(() => Settings.disableCountdownSound, b => Settings.disableCountdownSound = b, "disableCountdownSound");
+                ShowSetting(() => Settings.disableEndingSound, b => Settings.disableEndingSound = b, "disableEndingSound");
                 GUILayout.EndVertical();
                 GUILayout.EndHorizontal();
             }
@@ -387,14 +399,14 @@ namespace BackToThePast
             GUILayout.Space(10);
             etc = GUILayout.Toggle(etc,
                 $"{(etc ? "▼" : "▶")} " +
-                $"{(RDString.language == SystemLanguage.Korean ? "기타" : "Etc")}",
+                $"{Localization["bttp.settings.etc"]}",
                 label);
             if (etc)
             {
                 GUILayout.BeginHorizontal();
                 GUILayout.Space(15);
                 GUILayout.BeginVertical();
-                ShowSetting("legacyFont", false, "옛날 폰트 사용", "Use Old Font", c =>
+                ShowSetting(() => Settings.legacyFont, b => Settings.legacyFont = b, "legacyFont", c =>
                 {
                     RDString.initialized = false;
                     Persistence.Save();
@@ -405,25 +417,25 @@ namespace BackToThePast
                     GUILayout.BeginHorizontal();
                     GUILayout.Space(10);
                     GUILayout.BeginVertical();
-                    ShowSetting("butNotJudgement", false, "판정 텍스트엔 적용하지 않기", "But Not For Judgement Text", c =>
+                    ShowSetting(() => Settings.butNotJudgement, b => Settings.butNotJudgement = b, "butNotJudgement", c =>
                     {
                         RDString.initialized = false;
                         Persistence.Save();
                         ADOBase.RestartScene();
                     });
-                    ShowSetting("butNotCountdown", false, "카운트다운 텍스트엔 적용하지 않기", "But Not For Countdown Text", c =>
+                    ShowSetting(() => Settings.butNotCountdown, b => Settings.butNotCountdown = b, "butNotCountdown", c =>
                     {
                         RDString.initialized = false;
                         Persistence.Save();
                         ADOBase.RestartScene();
                     });
-                    ShowSetting("butNotTitle", false, "맵 제목엔 적용하지 않기", "But Not For Level Title", c =>
+                    ShowSetting(() => Settings.butNotTitle, b => Settings.butNotTitle = b, "butNotTitle", c =>
                     {
                         RDString.initialized = false;
                         Persistence.Save();
                         ADOBase.RestartScene();
                     });
-                    ShowSetting("butNotSetting", false, "설정 텍스트엔 적용하지 않기", "But Not For Setting Text", c =>
+                    ShowSetting(() => Settings.butNotSetting, b => Settings.butNotSetting = b, "butNotSetting", c =>
                     {
                         RDString.initialized = false;
                         Persistence.Save();
@@ -432,7 +444,7 @@ namespace BackToThePast
                     GUILayout.EndVertical();
                     GUILayout.EndHorizontal();
                 }
-                ShowSetting("disableAlphaWarning", false, "알파 버젼에서의 시작 시 경고창을 띄우지 않기", "Disable Alpha's Start Warning");
+                ShowSetting(() => Settings.disableAlphaWarning, b => Settings.disableAlphaWarning = b, "disableAlphaWarning");
                 GUILayout.EndVertical();
                 GUILayout.EndHorizontal();
             }
@@ -453,36 +465,33 @@ namespace BackToThePast
             GUILayout.EndHorizontal();
         }
 
-        private static void ShowSetting(string name, bool reverse, string korean, string english, Action<bool> onChange = null)
+        private static void ShowSetting(Func<bool> getter, Action<bool> setter, string key, Action<bool> onChange = null)
         {
-            ShowSetting<Settings>(Settings, name, reverse, korean, english, onChange);
-        }
-
-        private static void ShowSetting<T>(object instance, string name, bool reverse, string korean, string english, Action<bool> onChange = null)
-        {
-            bool prev = typeof(T).Get<bool>(name, instance);
+            bool prev = getter.Invoke();
             bool current = GUILayout.Toggle(prev,
-                     $"{((reverse ? !prev : prev) ? "☑" : "☐")} " +
-                     $"{(RDString.language == SystemLanguage.Korean ? korean : english)}",
+                     $"{(prev ? "☑" : "☐")} " +
+                     $"{Localization[$"bttp.settings.{key}"]}",
                      label);
-            typeof(T).Set(name, current, instance);
+            setter.Invoke(current);
             if (prev != current)
                 onChange?.Invoke(current);
         }
 
-        private static void ShowSlider(string name, int min, int max, Action<int> onChange = null)
+        private static void ShowIntSlider(Func<int> getter, Action<int> setter, int min, int max, Action<int> onChange = null)
         {
-            ShowSlider<Settings>(Settings, name, min, max, onChange);
+            ShowSlider(() => getter.Invoke(), f => setter.Invoke((int)f), min, max, 0, f => onChange.Invoke((int)f));
         }
 
-        private static void ShowSlider<T>(object instance, string name, int min, int max, Action<int> onChange = null)
+        private static void ShowSlider(Func<float> getter, Action<float> setter, float min, float max, int decimals = -1, Action<float> onChange = null)
         {
-            int prev = typeof(T).Get<int>(name, instance);
+            float prev = getter.Invoke();
             GUILayout.BeginHorizontal();
-            int current = (int)GUILayout.HorizontalSlider(prev, min, max, GUILayout.Width(200));
+            float current = GUILayout.HorizontalSlider(prev, min, max, GUILayout.Width(200));
+            if (decimals > -1)
+                current = Mathf.Round(current * Mathf.Pow(10, decimals)) / Mathf.Pow(10, decimals);
             GUILayout.Label($"{current}", label);
             GUILayout.EndHorizontal();
-            typeof(T).Set(name, current, instance);
+            setter.Invoke(current);
             if (prev != current)
                 onChange?.Invoke(current);
         }

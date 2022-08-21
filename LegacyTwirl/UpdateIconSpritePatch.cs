@@ -28,6 +28,8 @@ namespace BackToThePast.LegacyTwirl
             float num4 = -(float)__instance.entryangle + Mathf.PI / 2 - num / 2f * (__instance.isCCW ? -1 : 1) - Mathf.PI / 2 + num2;
             __instance.SetIconAngle((__instance.floorRenderer is FloorSpriteRenderer) ? num4 : (-num4));
             __instance.SetIconOutlineSprite(__instance.isCCW ? Images.swirl_ccw_outline : Images.swirl_cw_outline);
+            if (Main.Settings.twirlWithoutArrow)
+                return;
             GameObject arrow_obj = new GameObject();
             arrow_obj.transform.parent = __instance.transform;
             TwirlRenderer arrow = arrow_obj.AddComponent<TwirlRenderer>();
