@@ -1,8 +1,8 @@
-﻿using HarmonyLib;
+﻿using BackToThePast.Patch;
 
 namespace BackToThePast.LegacyFont
 {
-    [HarmonyPatch(typeof(scrController), "IsPercentCompleteBest")]
+    [BTTPPatch(typeof(scrController), "IsPercentCompleteBest")]
     public static class IsPercentCompleteBestPatch
     {
         public static void Postfix(ref bool __result)

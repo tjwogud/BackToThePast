@@ -1,14 +1,14 @@
-﻿using HarmonyLib;
+﻿using BackToThePast.Patch;
 
 namespace BackToThePast.HideNoFail
 {
-    [HarmonyPatch(typeof(scnEditor), "SwitchToEditMode")]
+    [BTTPPatch(typeof(scnEditor), "SwitchToEditMode")]
     public static class SwitchToEditModePatch
     {
         public static void Postfix(scnEditor __instance)
         {
             if (Main.Settings.hideNoFail)
-                Main.HideNoFail();
+                HideNoFailTweak.ToggleNoFail(false);
         }
     }
 }

@@ -1,9 +1,9 @@
-﻿using HarmonyLib;
+﻿using BackToThePast.Patch;
 using UnityEngine;
 
 namespace BackToThePast.LegacyFont
 {
-    [HarmonyPatch(typeof(RDString), "GetFontDataForLanguage")]
+    [BTTPPatch(typeof(RDString), "GetFontDataForLanguage")]
     public static class GetFontDataForLanguagePatch
     {
         public static void Postfix(ref FontData __result, SystemLanguage language)

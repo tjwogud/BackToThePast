@@ -1,9 +1,9 @@
-﻿using HarmonyLib;
+﻿using BackToThePast.Patch;
 using UnityEngine;
 
 namespace BackToThePast.OldPracticeMode
 {
-    [HarmonyPatch(typeof(scrController), "Fail2_Update")]
+    [BTTPPatch(typeof(scrController), "Fail2_Update")]
     public static class Fail2_UpdatePatch
     {
         public static bool Prefix()

@@ -1,14 +1,14 @@
-﻿using HarmonyLib;
+﻿using BackToThePast.Patch;
 
 namespace BackToThePast.HideNoFail
 {
-    [HarmonyPatch(typeof(scnEditor), "Start")]
+    [BTTPPatch(typeof(scnEditor), "Start")]
     public static class StartPatch
     {
         public static void Postfix()
         {
             if (Main.Settings.hideNoFail)
-                Main.HideNoFail();
+                HideNoFailTweak.ToggleNoFail(false);
         }
     }
 }

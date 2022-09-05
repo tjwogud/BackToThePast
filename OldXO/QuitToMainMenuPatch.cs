@@ -1,8 +1,8 @@
-﻿using HarmonyLib;
+﻿using BackToThePast.Patch;
 
 namespace BackToThePast.OldXO
 {
-    [HarmonyPatch(typeof(scrController), "QuitToMainMenu")]
+    [BTTPPatch(typeof(scrController), "QuitToMainMenu")]
     public static class QuitToMainMenuPatch
     {
         public static void Prefix()

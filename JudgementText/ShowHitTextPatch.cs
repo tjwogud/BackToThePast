@@ -1,11 +1,11 @@
-﻿using BackToThePast.Utils;
-using HarmonyLib;
+﻿using BackToThePast.Patch;
+using BackToThePast.Utils;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace BackToThePast.JudgementText
 {
-    [HarmonyPatch(typeof(scrController), "ShowHitText")]
+    [BTTPPatch(typeof(scrController), "ShowHitText")]
     public static class ShowHitTextPatch
     {
         public static bool Prefix(scrController __instance, HitMargin hitMargin, ref Vector3 position, float angle)

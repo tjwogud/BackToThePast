@@ -1,10 +1,10 @@
-﻿using HarmonyLib;
+﻿using BackToThePast.Patch;
 using System.IO;
 using UnityEngine;
 
 namespace BackToThePast.OldXO
 {
-    [HarmonyPatch(typeof(CustomLevel), "LoadAndPlayLevel")]
+    [BTTPPatch(typeof(CustomLevel), "LoadAndPlayLevel")]
     public static class LoadAndPlayLevelPatch
     {
         public static bool Prefix(CustomLevel __instance, string levelPath, ref bool __result)

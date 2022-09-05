@@ -1,8 +1,8 @@
-﻿using HarmonyLib;
+﻿using BackToThePast.Patch;
 
 namespace BackToThePast.HideDifficulty
 {
-    [HarmonyPatch(typeof(EditorDifficultySelector), "ToggleDifficulty")]
+    [BTTPPatch(typeof(EditorDifficultySelector), "ToggleDifficulty")]
     public static class ToggleDifficultyPatch
     {
         public static bool Prefix()

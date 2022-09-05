@@ -1,8 +1,8 @@
-﻿using HarmonyLib;
+﻿using BackToThePast.Patch;
 
 namespace BackToThePast.LegacyFlash
 {
-    [HarmonyPatch(typeof(scrController), "OnDamage")]
+    [BTTPPatch(typeof(scrController), "OnDamage")]
     public static class OnDamagePatch
     {
         public static void Postfix()

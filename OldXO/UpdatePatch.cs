@@ -1,9 +1,9 @@
-﻿using HarmonyLib;
+﻿using BackToThePast.Patch;
 using UnityEngine;
 
 namespace BackToThePast.OldXO
 {
-    [HarmonyPatch(typeof(scrCamera), "Update")]
+    [BTTPPatch(typeof(scrCamera), "Update")]
     public static class UpdatePatch
     {
         public static void Prefix()

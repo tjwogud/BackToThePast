@@ -1,17 +1,20 @@
-﻿using BackToThePast.Utils;
+﻿using BackToThePast.Patch;
+using BackToThePast.Utils;
 using DG.Tweening;
-using HarmonyLib;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace BackToThePast.OldXO
 {
-    [HarmonyPatch(typeof(scnLevelSelect), "Start")]
+    [BTTPPatch(typeof(scnLevelSelect), "Start")]
     public static class StartPatch
     {
-        public static void Postfix(scnLevelSelect __instance)
+        public static void Postfix()
         {
+            if (Persistence.GetSavedCurrentLevel().StartsWith("BackToThePast.OldXO"))
+                Object.FindObjectOfType<scrMenuContinueInfo>().GetComponent<Text>().text = $"({Main.Localization["bttp.oldxo.title"]})";
             GameObject oldXO = new GameObject("oldXO");
-            oldXO.transform.parent = GameObject.Find("Floor Container").transform;
+            oldXO.transform.parent = (GameObject.Find("Floor Container") ?? GameObject.Find("Floors")).transform;
             for (int i = 0; i < 15; i++)
                 if (i == 2)
                     FloorUtils.AddEventFloor(0, -3, 5 + i, 23, () => scrCamera.instance.positionState = PositionState.CrownIsland, oldXO.transform).gameObject.AddComponent<FloorHider>();

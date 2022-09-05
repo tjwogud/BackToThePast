@@ -1,9 +1,9 @@
-﻿using HarmonyLib;
+﻿using BackToThePast.Patch;
 using System.Linq;
 
 namespace BackToThePast.OldXO
 {
-    [HarmonyPatch(typeof(PauseMenu), "RefreshLayout")]
+    [BTTPPatch(typeof(PauseMenu), "RefreshLayout")]
     public static class RefreshLayoutPatch
     {
         public static void Postfix(ref PauseButton[] ___pauseButtons, PauseButton ___openInEditorButton)

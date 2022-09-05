@@ -1,8 +1,8 @@
-﻿using HarmonyLib;
+﻿using BackToThePast.Patch;
 
 namespace BackToThePast.WhiteAuto
 {
-    [HarmonyPatch(typeof(CustomLevel), "ResetScene")]
+    [BTTPPatch(typeof(CustomLevel), "ResetScene")]
     public static class ResetScenePatch
     {
         public static void Postfix()

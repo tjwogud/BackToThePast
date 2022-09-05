@@ -1,14 +1,14 @@
-﻿using HarmonyLib;
+﻿using BackToThePast.Patch;
 
 namespace BackToThePast.LegacyEditorButtons
 {
-    [HarmonyPatch(typeof(scnEditor), "Awake")]
+    [BTTPPatch(typeof(scnEditor), "Awake")]
     public static class AwakePatch
     {
         public static void Postfix()
         {
-            Main.ChangeEditorButtons(Main.Settings.legacyEditorButtonsPositions);
-            Main.RemoveShadowAddOutline(Main.Settings.legacyEditorButtonsDesigns);
+            LegacyEditorButtonsTweak.ChangeEditorButtons(Main.Settings.legacyEditorButtonsPositions);
+            LegacyEditorButtonsTweak.RemoveShadowAddOutline(Main.Settings.legacyEditorButtonsDesigns);
         }
     }
 }

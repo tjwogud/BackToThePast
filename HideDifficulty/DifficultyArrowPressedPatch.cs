@@ -1,8 +1,8 @@
-﻿using HarmonyLib;
+﻿using BackToThePast.Patch;
 
 namespace BackToThePast.HideDifficulty
 {
-    [HarmonyPatch(typeof(scrUIController), "DifficultyArrowPressed")]
+    [BTTPPatch(typeof(scrUIController), "DifficultyArrowPressed")]
     public static class DifficultyArrowPressedPatch
     {
         public static bool Prefix()

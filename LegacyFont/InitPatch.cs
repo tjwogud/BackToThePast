@@ -1,9 +1,9 @@
-﻿using BackToThePast.Utils;
-using HarmonyLib;
+﻿using BackToThePast.Patch;
+using BackToThePast.Utils;
 
 namespace BackToThePast.LegacyFont
 {
-    [HarmonyPatch(typeof(scrHitTextMesh), "Init")]
+    [BTTPPatch(typeof(scrHitTextMesh), "Init")]
     public static class InitPatch
     {
         private static FontData prev;

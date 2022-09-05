@@ -1,8 +1,8 @@
-﻿using HarmonyLib;
+﻿using BackToThePast.Patch;
 
 namespace BackToThePast.WeakAuto
 {
-    [HarmonyPatch(typeof(scrShowIfDebug), "Update")]
+    [BTTPPatch(typeof(scrShowIfDebug), "Update")]
     public static class UpdatePatch
     {
         public static void Prefix()

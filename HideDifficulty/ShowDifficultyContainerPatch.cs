@@ -1,14 +1,14 @@
-﻿using HarmonyLib;
+﻿using BackToThePast.Patch;
 
 namespace BackToThePast.HideDifficulty
 {
-    [HarmonyPatch(typeof(scrUIController), "ShowDifficultyContainer")]
+    [BTTPPatch(typeof(scrUIController), "ShowDifficultyContainer")]
     public static class ShowDifficultyContainerPatch
     {
         public static void Postfix()
         {
             if (Main.Settings.hideDifficulty)
-                Main.HideDifficulty();
+                HideDifficultyTweak.ToggleDifficulty(false);
         }
     }
 }

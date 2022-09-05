@@ -1,10 +1,10 @@
-﻿
+﻿using BackToThePast.Patch;
 using HarmonyLib;
 
 namespace BackToThePast.WhiteAuto
 {
-    [HarmonyPatch(typeof(scnEditor), "highBPM", MethodType.Getter)]
-    public static class GetPatch
+    [BTTPPatch(typeof(scnEditor), "highBPM", MethodType.Getter)]
+    public static class highBPMPatch
     {
         public static void Postfix(ref bool __result)
         {

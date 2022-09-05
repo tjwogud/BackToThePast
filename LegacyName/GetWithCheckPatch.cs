@@ -1,8 +1,8 @@
-﻿using HarmonyLib;
+﻿using BackToThePast.Patch;
 
 namespace BackToThePast.LegacyName
 {
-    [HarmonyPatch(typeof(RDString), "GetWithCheck")]
+    [BTTPPatch(typeof(RDString), "GetWithCheck")]
     public static class GetWithCheckPatch
     {
         public static void Postfix(ref string __result)

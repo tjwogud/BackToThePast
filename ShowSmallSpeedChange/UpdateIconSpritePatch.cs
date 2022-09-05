@@ -1,9 +1,9 @@
-﻿using HarmonyLib;
+﻿using BackToThePast.Patch;
 using UnityEngine;
 
 namespace BackToThePast.ShowSmallSpeedChange
 {
-	[HarmonyPatch(typeof(scrFloor), "UpdateIconSprite")]
+	[BTTPPatch(typeof(scrFloor), "UpdateIconSprite")]
 	public static class UpdateIconSpritePatch
     {
         public static void Prefix(scrFloor __instance)

@@ -1,8 +1,8 @@
-﻿using HarmonyLib;
+﻿using BackToThePast.Patch;
 
 namespace BackToThePast.NoSfxSound
 {
-    [HarmonyPatch(typeof(scrConductor), "PlayHitTimes")]
+    [BTTPPatch(typeof(scrConductor), "PlayHitTimes")]
     public static class PlayHitTimesPatch
     {
         private static bool prev1;

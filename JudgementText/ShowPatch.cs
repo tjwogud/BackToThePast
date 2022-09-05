@@ -1,10 +1,10 @@
-﻿using DG.Tweening;
-using HarmonyLib;
+﻿using BackToThePast.Patch;
+using DG.Tweening;
 using UnityEngine;
 
 namespace BackToThePast.JudgementText
 {
-    [HarmonyPatch(typeof(scrHitTextMesh), "Show")]
+    [BTTPPatch(typeof(scrHitTextMesh), "Show")]
     public static class ShowPatch
     {
         public static void Postfix(scrHitTextMesh __instance, Renderer ___meshRenderer)

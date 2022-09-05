@@ -1,9 +1,9 @@
-﻿using HarmonyLib;
+﻿using BackToThePast.Patch;
 using System.Reflection;
 
 namespace BackToThePast.NoSfxSound
 {
-    [HarmonyPatch]
+    [BTTPPatch]
     public static class PlaySfxPatch
     {
         public static MethodBase TargetMethod()

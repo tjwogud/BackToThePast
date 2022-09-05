@@ -1,10 +1,10 @@
-﻿using BackToThePast.Utils;
-using HarmonyLib;
+﻿using BackToThePast.Patch;
+using BackToThePast.Utils;
 using UnityEngine.UI;
 
 namespace BackToThePast.LegacyFont
 {
-    [HarmonyPatch(typeof(RDString), "SetLocalizedFont", typeof(Text))]
+    [BTTPPatch(typeof(RDString), "SetLocalizedFont", typeof(Text))]
     public static class SetLocalizedFontPatch
     {
         private static FontData prev;

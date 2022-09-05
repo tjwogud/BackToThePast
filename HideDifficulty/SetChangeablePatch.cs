@@ -1,14 +1,14 @@
-﻿using HarmonyLib;
+﻿using BackToThePast.Patch;
 
 namespace BackToThePast.HideDifficulty
 {
-    [HarmonyPatch(typeof(EditorDifficultySelector), "SetChangeable")]
+    [BTTPPatch(typeof(EditorDifficultySelector), "SetChangeable")]
     public static class SetChangeablePatch
     {
         public static void Postfix()
         {
             if (Main.Settings.hideDifficulty)
-                Main.HideDifficulty();
+                HideDifficultyTweak.ToggleDifficulty(false);
         }
     }
 }

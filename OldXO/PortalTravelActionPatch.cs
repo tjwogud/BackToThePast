@@ -1,8 +1,8 @@
-﻿using HarmonyLib;
+﻿using BackToThePast.Patch;
 
 namespace BackToThePast.OldXO
 {
-    [HarmonyPatch(typeof(scrController), "PortalTravelAction")]
+    [BTTPPatch(typeof(scrController), "PortalTravelAction")]
     public static class PortalTravelActionPatch
     {
         public static void Postfix(int ___portalDestination)

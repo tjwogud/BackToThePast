@@ -1,8 +1,8 @@
-﻿using HarmonyLib;
+﻿using BackToThePast.Patch;
 
 namespace BackToThePast.NoResult
 {
-    [HarmonyPatch(typeof(scrController), "OnLandOnPortal")]
+    [BTTPPatch(typeof(scrController), "OnLandOnPortal")]
     public static class OnLandOnPortalPatch
     {
         public static void Postfix(scrController __instance)

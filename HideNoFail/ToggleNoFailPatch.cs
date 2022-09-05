@@ -1,9 +1,10 @@
-﻿using HarmonyLib;
+﻿using BackToThePast.Patch;
+using HarmonyLib;
 using System.Reflection;
 
 namespace BackToThePast.HideNoFail
 {
-    [HarmonyPatch]
+    [BTTPPatch]
     public static class ToggleNoFailPatch1
     {
         public static MethodBase TargetMethod()
@@ -17,7 +18,7 @@ namespace BackToThePast.HideNoFail
         }
     }
 
-    [HarmonyPatch(typeof(scnEditor), "ToggleNoFail")]
+    [BTTPPatch(typeof(scnEditor), "ToggleNoFail")]
     public static class ToggleNoFailPatch2
     {
         public static bool Prefix()

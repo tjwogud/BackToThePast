@@ -1,9 +1,9 @@
-﻿using BackToThePast.Utils;
-using HarmonyLib;
+﻿using BackToThePast.Patch;
+using BackToThePast.Utils;
 
 namespace BackToThePast.LegacyFont
 {
-    [HarmonyPatch(typeof(scrCountdown), "Awake")]
+    [BTTPPatch(typeof(scrCountdown), "Awake")]
     public static class AwakePatch
     {
         private static FontData prev;

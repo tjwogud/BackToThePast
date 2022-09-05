@@ -1,10 +1,10 @@
-﻿using BackToThePast.Utils;
-using HarmonyLib;
+﻿using BackToThePast.Patch;
+using BackToThePast.Utils;
 using UnityEngine;
 
 namespace BackToThePast.OldXO
 {
-    [HarmonyPatch(typeof(scnLevelSelect), "JumpToWorldPortal")]
+    [BTTPPatch(typeof(scnLevelSelect), "JumpToWorldPortal")]
     public static class JumpToWorldPortalPatch
     {
         public static bool Prefix(string world, bool instant, bool wipeFirst, scnLevelSelect __instance)

@@ -1,9 +1,9 @@
-﻿using BackToThePast.Utils;
-using HarmonyLib;
+﻿using BackToThePast.Patch;
+using BackToThePast.Utils;
 
 namespace BackToThePast.HideAlphaWarning
 {
-    [HarmonyPatch(typeof(scnSplash), "Start")]
+    [BTTPPatch(typeof(scnSplash), "Start")]
     public static class StartPatch
     {
         public static bool Prefix(scnSplash __instance)

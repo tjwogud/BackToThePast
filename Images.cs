@@ -1,6 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Reflection;
+﻿using System.Reflection;
 using UnityEngine;
 
 namespace BackToThePast
@@ -15,6 +13,8 @@ namespace BackToThePast
         public static Sprite arrow_ccw;
         public static Sprite arrow_cw_outline;
         public static Sprite arrow_ccw_outline;
+
+        public static Sprite editor_button_fill;
 
         public static void Load(AssetBundle bundle)
         {

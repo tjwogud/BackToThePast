@@ -1,10 +1,10 @@
-﻿using BackToThePast.Utils;
-using HarmonyLib;
+﻿using BackToThePast.Patch;
+using BackToThePast.Utils;
 using UnityEngine;
 
 namespace BackToThePast.Space360Tile
 {
-    [HarmonyPatch(typeof(scnEditor), "Play")]
+    [BTTPPatch(typeof(scnEditor), "Play")]
     public static class PlayPatch
     {
         public static bool Prefix(scnEditor __instance)

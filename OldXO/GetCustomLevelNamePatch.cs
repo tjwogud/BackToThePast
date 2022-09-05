@@ -1,8 +1,8 @@
-﻿using HarmonyLib;
+﻿using BackToThePast.Patch;
 
 namespace BackToThePast.OldXO
 {
-    [HarmonyPatch(typeof(ADOBase), "GetCustomLevelName")]
+    [BTTPPatch(typeof(ADOBase), "GetCustomLevelName")]
     public static class GetCustomLevelNamePatch
     {
         public static bool Prefix(string path, ref string __result)
