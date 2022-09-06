@@ -158,8 +158,10 @@ namespace BackToThePast.LegacyCLS
             {
                 scnCLS.instance.gameObject.GetOrAddComponent<WorkshopShortcut>();
                 CreateInputField();
-                optionsPanels.Method("TogglePanel", new object[] { true, false });
-                optionsPanels.Method("TogglePanel", new object[] { false, false });
+                if (optionsPanels.Get<bool>("showingLeftPanel"))
+                    optionsPanels.Method("TogglePanel", new object[] { true, false });
+                if (optionsPanels.Get<bool>("showingRightPanel"))
+                    optionsPanels.Method("TogglePanel", new object[] { false, false });
                 searchField.text = scnCLS.instance.Get("optionsPanels").Get<InputField>("searchInputField").text;
             }
             else
