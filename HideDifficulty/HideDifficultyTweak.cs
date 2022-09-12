@@ -13,28 +13,28 @@ namespace BackToThePast.HideDifficulty
             {
                 if (scnEditor != null)
                 {
-                    if (scnEditor.editorDifficultySelector.gameObject.activeSelf == false)
+                    if (!scnEditor.editorDifficultySelector.gameObject.activeSelf)
                         scnEditor.editorDifficultySelector.gameObject.SetActive(true);
                 }
-                else if (instance != null)
+                if (instance != null)
                 {
-                    if (instance.difficultyContainer.gameObject.activeSelf == false)
+                    if (!instance.difficultyContainer.gameObject.activeSelf)
                         instance.difficultyContainer.gameObject.SetActive(true);
-                    if (instance.difficultyFadeContainer.gameObject.activeSelf == false)
+                    if (!instance.difficultyFadeContainer.gameObject.activeSelf)
                         instance.difficultyFadeContainer.gameObject.SetActive(true);
                 }
             }
             else
             {
                 GCS.difficulty = Difficulty.Strict;
-                if (scnEditor != null)
+                if (instance != null)
                 {
-                    scnEditor.editorDifficultySelector.Method("UpdateDifficultyDisplay");
-                    if (scnEditor.editorDifficultySelector.gameObject.activeSelf == true)
-                        scnEditor.editorDifficultySelector.gameObject.SetActive(false);
-                }
-                else if (instance != null)
-                {
+                    if (scnEditor != null)
+                    {
+                        scnEditor.editorDifficultySelector.Method("UpdateDifficultyDisplay");
+                        if (scnEditor.editorDifficultySelector.gameObject.activeSelf)
+                            scnEditor.editorDifficultySelector.gameObject.SetActive(false);
+                    }
                     if (AccessTools.Field(typeof(scrUIController), "currentDifficultyIndex") != null)
                     {
                         instance.Set("currentDifficultyIndex", 2);
@@ -43,9 +43,9 @@ namespace BackToThePast.HideDifficulty
                     else
                         instance.Method("UpdateDifficultyUI", new object[] { Difficulty.Strict });
                     GCS.difficulty = Difficulty.Strict;
-                    if (instance.difficultyContainer.gameObject.activeSelf == true)
+                    if (instance.difficultyContainer.gameObject.activeSelf)
                         instance.difficultyContainer.gameObject.SetActive(false);
-                    if (instance.difficultyFadeContainer.gameObject.activeSelf == true)
+                    if (instance.difficultyFadeContainer.gameObject.activeSelf)
                         instance.difficultyFadeContainer.gameObject.SetActive(false);
                 }
             }
