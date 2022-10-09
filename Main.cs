@@ -58,7 +58,7 @@ namespace BackToThePast
             Logger.Log("Load Completed!");
             Logger.Log("Initializing Patches...");
             BTTPPatch.Init();
-            Localization = Localization.Load(modEntry, "1QcrRL6LAs8WxJj_hFsEJa3CLM5g3e8Ya0KQlRKXwdlU", 343830105);
+            Localization = Localization.Load("1QcrRL6LAs8WxJj_hFsEJa3CLM5g3e8Ya0KQlRKXwdlU", 343830105, modEntry);
             lucky = new System.Random().Next(20) == 0;
         }
 
