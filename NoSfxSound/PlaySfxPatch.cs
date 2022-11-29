@@ -1,4 +1,5 @@
 ﻿using BackToThePast.Patch;
+using System.Linq;
 using System.Reflection;
 
 namespace BackToThePast.NoSfxSound
@@ -8,14 +9,13 @@ namespace BackToThePast.NoSfxSound
     {
         public static MethodBase TargetMethod()
         {
-            MethodBase playSfx = typeof(scrSfx).GetMethod("PlaySfx");
-            MethodBase legacyPlaySfx = typeof(scrConductor).GetMethod("PlaySfx");
-            return playSfx ?? legacyPlaySfx;
+            MethodBase playSfx = typeof(scrSfx).GetMethods().First(m => m.Name == "PlaySfx" && m.GetParameters().Length != 0 && m.GetParameters()[0].ParameterType == typeof(SfxSound));
+            return playSfx;
         }
 
-        public static bool Prefix(SfxSound sound)
+        public static bool Prefix(SfxSound __0)
         {
-            switch (sound)
+            switch (__0)
             {
                 case SfxSound.PurePerfect:
                     return !Main.Settings.disablePurePerfectSound;
