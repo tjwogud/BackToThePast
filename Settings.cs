@@ -27,8 +27,10 @@ namespace BackToThePast
         public bool hideNoFail = false;
         [TogglePatch("OldPracticeMode")]
         public bool oldPracticeMode = false;
-        [TogglePatch("ShowSmallSpeedChange")]
+        [TogglePatch("ShowSpeedChange")]
         public bool showSmallSpeedChange = false;
+            public bool showDetailSpeedChange = false;
+            public float minBpmToShowSpeedChange = 0.05f;
         [TogglePatch("LegacyFlash")]
         public bool legacyFlash = false;
         [TogglePatch("JudgementText")]
@@ -63,6 +65,8 @@ namespace BackToThePast
         public bool disableCountdownSound = false;
         [TogglePatch("NoSfxSound")]
         public bool disableEndingSound = false;
+        [TogglePatch("NoSfxSound")]
+        public bool disableNewBestSound = false;
 
         [TogglePatch("LegacyFont")]
         public bool legacyFont = false;
@@ -74,5 +78,7 @@ namespace BackToThePast
         public bool legacyCLS = false;
         [TogglePatch("HideAlphaWarning")]
         public bool disableAlphaWarning = false;
+        [TogglePatch("HideAnnounceSign")]
+        public bool disableAnnounceSign = false;
     }
 }

@@ -13,7 +13,7 @@ namespace BackToThePast.NoSfxSound
             return playSfx;
         }
 
-        public static bool Prefix(SfxSound __0)
+        public static bool Prefix(ref SfxSound __0)
         {
             switch (__0)
             {
@@ -22,6 +22,10 @@ namespace BackToThePast.NoSfxSound
                 case SfxSound.ScreenWipeIn:
                 case SfxSound.ScreenWipeOut:
                     return !Main.Settings.disableWindSound;
+                case SfxSound.PlanetExplosionHighscore:
+                    if (Main.Settings.disableNewBestSound)
+                        __0 = SfxSound.PlanetExplosion;
+                    break;
             }
             return true;
         }

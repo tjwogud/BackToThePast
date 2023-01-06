@@ -1,4 +1,5 @@
-﻿using BackToThePast.HideDifficulty;
+﻿using BackToThePast.HideAnnounceSign;
+using BackToThePast.HideDifficulty;
 using BackToThePast.HideNoFail;
 using BackToThePast.LegacyCLS;
 using BackToThePast.LegacyEditorButtons;
@@ -90,6 +91,7 @@ namespace BackToThePast
         private static bool initialized = false;
 
         private static GUIStyle label;
+        private static GUIStyle smallLabel;
         private static GUIStyle disabledLabel;
         private static GUIStyle btn;
         private static bool play = false;
@@ -118,6 +120,8 @@ namespace BackToThePast
                 initialized = true;
                 label = new GUIStyle(GUI.skin.label);
                 label.fontSize = 18;
+                smallLabel = new GUIStyle(GUI.skin.label);
+                smallLabel.fontSize = 16;
                 disabledLabel = new GUIStyle(label);
                 disabledLabel.normal.textColor = Color.red;
                 btn = new GUIStyle(GUI.skin.button);
@@ -147,7 +151,34 @@ namespace BackToThePast
                     ShowSetting(Settings.hideNoFail, b => Settings.hideNoFail = b, "hideNoFail", c => HideNoFailTweak.ToggleNoFail(!c));
                 }
                 ShowSetting(Settings.oldPracticeMode, b => Settings.oldPracticeMode = b, "oldPracticeMode");
-                ShowSetting(Settings.showSmallSpeedChange, b => Settings.showSmallSpeedChange = b, "showSmallSpeedChange");
+                ShowSetting(Settings.showSmallSpeedChange, b => Settings.showSmallSpeedChange = b, "showSmallSpeedChange", c => scnEditor.instance?.ApplyEventsToFloors());
+                if (Settings.showSmallSpeedChange)
+                {
+                    GUILayout.BeginHorizontal();
+                    GUILayout.Space(10);
+                    ShowSetting(Settings.showDetailSpeedChange, b => Settings.showDetailSpeedChange = b, "showDetailSpeedChange", c => scnEditor.instance?.ApplyEventsToFloors());
+                    GUILayout.EndHorizontal();
+                    if (Settings.showDetailSpeedChange)
+                    {
+                        GUILayout.BeginHorizontal();
+                        GUILayout.Space(15);
+                        GUILayout.BeginVertical();
+                        GUILayout.Label(Localization["bttp.settings.minBpmToShowSpeedChange"], smallLabel);
+                        GUILayout.BeginHorizontal();
+                        GUILayout.Label(Localization["bttp.settings.minBpmToShowSpeedChange.expression"], smallLabel);
+                        string current = GUILayout.TextField(string.Format("{0:0.0000}", Settings.minBpmToShowSpeedChange), GUILayout.Width(50), GUILayout.Height(23));
+                        if (float.TryParse(current, out float result) && result >= 0 && result != Settings.minBpmToShowSpeedChange)
+                        {
+                            Settings.minBpmToShowSpeedChange = result;
+                            scnEditor.instance?.ApplyEventsToFloors();
+                        }
+                        GUILayout.FlexibleSpace();
+                        GUILayout.EndHorizontal();
+                        GUILayout.EndVertical();
+                        GUILayout.FlexibleSpace();
+                        GUILayout.EndHorizontal();
+                    }
+                }
                 ShowSetting(Settings.legacyFlash, b => Settings.legacyFlash = b, "legacyFlash");
                 ShowSetting(Settings.noJudgeAnimation, b => Settings.noJudgeAnimation = b, "noJudgeAnimation");
                 ShowSetting(Settings.lateJudgement, b => Settings.lateJudgement = b, "lateJudgement");
@@ -215,6 +246,7 @@ namespace BackToThePast
                 ShowSetting(!GCS.playDeathSound, b => GCS.playDeathSound = !b, "disableDeathSound");
                 ShowSetting(Settings.disableCountdownSound, b => Settings.disableCountdownSound = b, "disableCountdownSound");
                 ShowSetting(Settings.disableEndingSound, b => Settings.disableEndingSound = b, "disableEndingSound");
+                ShowSetting(Settings.disableNewBestSound, b => Settings.disableNewBestSound = b, "disableNewBestSound");
                 GUILayout.EndVertical();
                 GUILayout.EndHorizontal();
             }
@@ -270,6 +302,7 @@ namespace BackToThePast
                 if (optionsPanelsCLS != null)
                     ShowSetting(Settings.legacyCLS, b => Settings.legacyCLS = b, "legacyCLS", LegacyCLSTweak.Toggle);
                 ShowSetting(Settings.disableAlphaWarning, b => Settings.disableAlphaWarning = b, "disableAlphaWarning");
+                ShowSetting(Settings.disableAnnounceSign, b => Settings.disableAnnounceSign = b, "disableAnnounceSign", c => HideAnnounceSignTweak.ToggleSign(!c));
                 GUILayout.EndVertical();
                 GUILayout.EndHorizontal();
             }
