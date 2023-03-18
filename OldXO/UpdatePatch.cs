@@ -8,8 +8,15 @@ namespace BackToThePast.OldXO
     {
         public static void Prefix()
         {
-            if ((int)scrCamera.instance.positionState == 1001)
-                scrCamera.instance.topos = new Vector3(scrCamera.instance.topos.x, 24, -10);
+            switch ((int)scrCamera.instance.positionState)
+            {
+                case 1001:
+                    scrCamera.instance.topos = new Vector3(scrCamera.instance.topos.x, 24, -10);
+                    break;
+                case 1002:
+                    scrCamera.instance.topos = new Vector3(19, 28, -10);
+                    break;
+            }
         }
     }
 }

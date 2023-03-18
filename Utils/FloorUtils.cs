@@ -1,4 +1,5 @@
-﻿using ByteSheep.Events;
+﻿using ADOFAI.ModdingConvenience;
+using ByteSheep.Events;
 using UnityEngine;
 
 namespace BackToThePast.Utils
@@ -17,13 +18,13 @@ namespace BackToThePast.Utils
 
         public static scrFloor AddFloorAt(float floorX, float floorY, float x, float y, Transform parent = null)
         {
-            var floor = GetFloorGameObjectAt(floorX, floorY)?.GetComponent<scrFloor>();
-            if (floor == null)
+            var floor = GetFloorGameObjectAt(floorX, floorY);
+            if (floor == null || !floor.GetComponent<scrFloor>())
                 return null;
             var obj = Object.Instantiate(floor, parent);
             obj.transform.position = new Vector3(x, y);
             //scrController.instance.lm.listFloors.Add(obj);
-            return obj;
+            return obj.GetComponent<scrFloor>();
         }
 
         public static scrFloor AddEventFloor(float floorX, float floorY, float x, float y, QuickAction action, Transform parent = null)
@@ -31,7 +32,11 @@ namespace BackToThePast.Utils
             var obj = AddFloorAt(floorX, floorY, x, y, parent);
             if (!obj)
                 return null;
-            Object.Destroy(obj.gameObject.GetComponent<ffxCallFunction>());
+            obj.GetComponent<scrGem>().Method("LocalRotate");
+            Object.Destroy(obj.GetComponent<scrGem>());
+            Object.Destroy(obj.GetComponent<ffxCallFunction>());
+            Object.Destroy(obj.GetComponent<scrMenuMovingFloor>());
+            obj.tag = "";
             var func = obj.gameObject.AddComponent<ffxCallFunction>();
             func.ue = new QuickEvent();
             func.ue.persistentCalls = new QuickPersistentCallGroup();

@@ -13,7 +13,7 @@ namespace BackToThePast.LegacyFont
         {
             prev = RDString.fontData;
             if (Main.Settings.legacyFont && ((Main.Settings.butNotTitle && text.name == "txtLevelName") || (Main.Settings.butNotSetting && text.transform.root.name == "PauseMenu(Clone)")))
-                typeof(RDString).Set("fontData", Main.font);
+                typeof(RDString).Set("fontData", Main.originFont);
         }
 
         public static void Postfix()

@@ -12,7 +12,7 @@ namespace BackToThePast.LegacyFont
         {
             prev = RDString.fontData;
             if (Main.Settings.legacyFont && Main.Settings.butNotJudgement)
-                typeof(RDString).Set("fontData", Main.font);
+                typeof(RDString).Set("fontData", Main.originFont);
         }
 
         public static void Postfix()

@@ -9,10 +9,11 @@ namespace BackToThePast.LegacyFont
         public static void Postfix(ref FontData __result, SystemLanguage language)
         {
             if (language == RDString.language)
-                Main.font = __result;
-            if (!Main.Settings.legacyFont)
-                return;
-            __result = Main.legacyFont;
+                Main.originFont = __result;
+            if (Main.Settings.legacyFont)
+                __result = Main.legacyFont;
+            else if (Main.Settings.oldGodoMaum && __result.font.name == RDConstants.data.latinFont.name)
+                __result.font = Main.oldGodoMaum;
         }
     }
 }

@@ -3,8 +3,9 @@ using BackToThePast.HideDifficulty;
 using BackToThePast.HideNoFail;
 using BackToThePast.LegacyCLS;
 using BackToThePast.LegacyEditorButtons;
+using BackToThePast.LegacyFont;
+using BackToThePast.OldBackground;
 using BackToThePast.Patch;
-using BackToThePast.Utils;
 using GDMiniJSON;
 using HarmonyLib;
 using Localizations;
@@ -25,8 +26,9 @@ namespace BackToThePast
         public static UnityModManager.ModEntry ModEntry;
         public static Settings Settings;
         public static Localization Localization;
+        public static Font oldGodoMaum;
         public static FontData legacyFont;
-        public static FontData font;
+        public static FontData originFont;
         public static Dictionary<string, object> old_xo;
         public static AudioClip one_forgotten_night;
         public static bool lucky;
@@ -49,6 +51,7 @@ namespace BackToThePast
             if (bundle == null)
                 throw new Exception("can't load assetbundle!");
             Images.Load(bundle);
+            oldGodoMaum = bundle.LoadAsset<Font>("godoMaum");
             legacyFont = new FontData() {
                 font = bundle.LoadAsset<Font>("Same_Mistake - Kopie"),
                 fontScale = 0.95f,
@@ -61,6 +64,8 @@ namespace BackToThePast
             BTTPPatch.Init();
             Localization = Localization.Load("1QcrRL6LAs8WxJj_hFsEJa3CLM5g3e8Ya0KQlRKXwdlU", 343830105, modEntry);
             lucky = new System.Random().Next(20) == 0;
+
+            GCNS.worldData["BackToThePast.OldXO"] = new GCNS.WorldData(1972, 1, 1.1f, false, new Vector2Int(19, 26), new Vector2Int(19, 26));
         }
 
         private static bool OnToggle(UnityModManager.ModEntry modEntry, bool value)
@@ -82,6 +87,8 @@ namespace BackToThePast
 
         private static void OnChangeScene(Scene current, Scene next)
         {
+            fontChanged = 0;
+            OldBackgroundTweak.SetBackground();
             if (Settings.hideDifficulty)
                 HideDifficultyTweak.ToggleDifficulty(false);
             if (Settings.hideNoFail)
@@ -97,11 +104,11 @@ namespace BackToThePast
         private static bool play = false;
         private static bool editor = false;
         private static bool sfx = false;
+        private static bool font = false;
         private static bool etc = false;
 
         private static bool changed;
-
-        public static FontData LegacyFont { get => legacyFont; set => legacyFont = value; }
+        private static int fontChanged = 0;
 
         public static void OnGUI(UnityModManager.ModEntry modEntry)
         {
@@ -187,7 +194,7 @@ namespace BackToThePast
                 {
                     GUILayout.BeginHorizontal();
                     GUILayout.Space(10);
-                    ShowIntSlider(() => Settings.judgeCount, i => Settings.judgeCount = i, 1, 100);
+                    ShowIntSlider(Settings.judgeCount, i => Settings.judgeCount = i, 1, 100);
                     GUILayout.EndHorizontal();
                 }
                 ShowSetting(Settings.legacyTwirl, b => Settings.legacyTwirl = b, "legacyTwirl", c => scnEditor.instance?.ApplyEventsToFloors());
@@ -252,6 +259,83 @@ namespace BackToThePast
             }
 
             GUILayout.Space(10);
+            font = GUILayout.Toggle(font,
+                $"{(font ? "▼" : "▶")} " +
+                $"{Localization["bttp.settings.font"]}",
+                label);
+            if (font)
+            {
+                GUILayout.BeginHorizontal();
+                GUILayout.Space(15);
+                GUILayout.BeginVertical();
+                GUILayout.Label(Localization["bttp.settings.font.description"], label);
+
+                ShowSetting(Settings.legacyFont, b => Settings.legacyFont = b, "legacyFont", c =>
+                {
+                    if (c)
+                        fontChanged += 1;
+                    else
+                        fontChanged -= 1;
+                });
+                if (Settings.legacyFont)
+                {
+                    GUILayout.BeginHorizontal();
+                    GUILayout.Space(10);
+                    GUILayout.BeginVertical();
+                    ShowSetting(Settings.butNotJudgement, b => Settings.butNotJudgement = b, "butNotJudgement", c =>
+                    {
+                        if (c)
+                            fontChanged += 2;
+                        else
+                            fontChanged -= 2;
+                    });
+                    ShowSetting(Settings.butNotCountdown, b => Settings.butNotCountdown = b, "butNotCountdown", c =>
+                    {
+                        if (c)
+                            fontChanged += 4;
+                        else
+                            fontChanged -= 4;
+                    });
+                    ShowSetting(Settings.butNotTitle, b => Settings.butNotTitle = b, "butNotTitle", c =>
+                    {
+                        if (c)
+                            fontChanged += 8;
+                        else
+                            fontChanged -= 8;
+                    });
+                    ShowSetting(Settings.butNotSetting, b => Settings.butNotSetting = b, "butNotSetting", c =>
+                    {
+                        if (c)
+                            fontChanged += 16;
+                        else
+                            fontChanged -= 16;
+                    });
+                    GUILayout.EndVertical();
+                    GUILayout.EndHorizontal();
+                }
+                ShowSetting(Settings.oldGodoMaum, b => Settings.oldGodoMaum = b, "oldGodoMaum", c =>
+                {
+                    if (c)
+                        fontChanged += 32;
+                    else
+                        fontChanged -= 32;
+                });
+                if (fontChanged != 0)
+                {
+                    if (GUILayout.Button(Localization["bttp.settings.font.refresh"], GUILayout.Width(200)))
+                    {
+                        fontChanged = 0;
+                        RDString.initialized = false;
+                        RDString.Setup();
+                        Persistence.Save();
+                        ADOBase.RestartScene();
+                    }
+                }
+                GUILayout.EndVertical();
+                GUILayout.EndHorizontal();
+            }
+
+            GUILayout.Space(10);
             etc = GUILayout.Toggle(etc,
                 $"{(etc ? "▼" : "▶")} " +
                 $"{Localization["bttp.settings.etc"]}",
@@ -261,48 +345,18 @@ namespace BackToThePast
                 GUILayout.BeginHorizontal();
                 GUILayout.Space(15);
                 GUILayout.BeginVertical();
-                ShowSetting(Settings.legacyFont, b => Settings.legacyFont = b, "legacyFont", c =>
-                {
-                    RDString.initialized = false;
-                    Persistence.Save();
-                    ADOBase.RestartScene();
-                });
-                if (Settings.legacyFont)
-                {
-                    GUILayout.BeginHorizontal();
-                    GUILayout.Space(10);
-                    GUILayout.BeginVertical();
-                    ShowSetting(Settings.butNotJudgement, b => Settings.butNotJudgement = b, "butNotJudgement", c =>
-                    {
-                        RDString.initialized = false;
-                        Persistence.Save();
-                        ADOBase.RestartScene();
-                    });
-                    ShowSetting(Settings.butNotCountdown, b => Settings.butNotCountdown = b, "butNotCountdown", c =>
-                    {
-                        RDString.initialized = false;
-                        Persistence.Save();
-                        ADOBase.RestartScene();
-                    });
-                    ShowSetting(Settings.butNotTitle, b => Settings.butNotTitle = b, "butNotTitle", c =>
-                    {
-                        RDString.initialized = false;
-                        Persistence.Save();
-                        ADOBase.RestartScene();
-                    });
-                    ShowSetting(Settings.butNotSetting, b => Settings.butNotSetting = b, "butNotSetting", c =>
-                    {
-                        RDString.initialized = false;
-                        Persistence.Save();
-                        ADOBase.RestartScene();
-                    });
-                    GUILayout.EndVertical();
-                    GUILayout.EndHorizontal();
-                }
                 if (optionsPanelsCLS != null)
                     ShowSetting(Settings.legacyCLS, b => Settings.legacyCLS = b, "legacyCLS", LegacyCLSTweak.Toggle);
                 ShowSetting(Settings.disableAlphaWarning, b => Settings.disableAlphaWarning = b, "disableAlphaWarning");
                 ShowSetting(Settings.disableAnnounceSign, b => Settings.disableAnnounceSign = b, "disableAnnounceSign", c => HideAnnounceSignTweak.ToggleSign(!c));
+                ShowSetting(Settings.oldBackground, b => Settings.oldBackground = b, "oldBackground", c => OldBackgroundTweak.SetBackground());
+                if (Settings.oldBackground)
+                {
+                    GUILayout.BeginHorizontal();
+                    GUILayout.Space(10);
+                    ShowToggleGroup(Settings.oldBackgroundIndex, i => Settings.oldBackgroundIndex = i, new string[] { "A", "B" }, c => OldBackgroundTweak.SetBackground());
+                    GUILayout.EndHorizontal();
+                }
                 GUILayout.EndVertical();
                 GUILayout.EndHorizontal();
             }
@@ -342,19 +396,35 @@ namespace BackToThePast
             }
         }
 
-        private static void ShowIntSlider(Func<int> getter, Action<int> setter, int min, int max, Action<int> onChange = null)
+        private static void ShowIntSlider(int prev, Action<int> setter, int min, int max, Action<int> onChange = null)
         {
-            ShowSlider(() => getter.Invoke(), f => setter.Invoke((int)f), min, max, 0, f => onChange.Invoke((int)f));
+            ShowSlider(prev, f => setter.Invoke((int)f), min, max, 0, f => onChange.Invoke((int)f));
         }
 
-        private static void ShowSlider(Func<float> getter, Action<float> setter, float min, float max, int decimals = -1, Action<float> onChange = null)
+        private static void ShowSlider(float prev, Action<float> setter, float min, float max, int decimals = -1, Action<float> onChange = null)
         {
-            float prev = getter.Invoke();
             GUILayout.BeginHorizontal();
             float current = GUILayout.HorizontalSlider(prev, min, max, GUILayout.Width(200));
             if (decimals > -1)
                 current = Mathf.Round(current * Mathf.Pow(10, decimals)) / Mathf.Pow(10, decimals);
             GUILayout.Label($"{current}", label);
+            GUILayout.EndHorizontal();
+            setter.Invoke(current);
+            if (prev != current)
+                onChange?.Invoke(current);
+        }
+
+        private static void ShowToggleGroup(int prev, Action<int> setter, string[] arr, Action<int> onChange = null)
+        {
+            GUILayout.BeginHorizontal();
+            int current = prev;
+            for (int i = 0; i < arr.Length; i++)
+            {
+                if (GUILayout.Button(prev == i ? $"<b>{arr[i]}</b>" : arr[i], GUILayout.Width(100)))
+                {
+                    current = i;
+                }
+            }
             GUILayout.EndHorizontal();
             setter.Invoke(current);
             if (prev != current)

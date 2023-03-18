@@ -74,11 +74,16 @@ namespace BackToThePast
             public bool butNotCountdown = false;
             public bool butNotTitle = false;
             public bool butNotSetting = false;
+        [TogglePatch("LegacyFont")]
+        public bool oldGodoMaum = false;
+
         [TogglePatch("LegacyCLS", "OptionsPanelsCLS")]
         public bool legacyCLS = false;
         [TogglePatch("HideAlphaWarning")]
         public bool disableAlphaWarning = false;
         [TogglePatch("HideAnnounceSign")]
         public bool disableAnnounceSign = false;
+        public bool oldBackground = false;
+            public int oldBackgroundIndex = 0;
     }
 }

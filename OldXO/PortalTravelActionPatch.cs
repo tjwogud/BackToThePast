@@ -5,27 +5,22 @@ namespace BackToThePast.OldXO
     [BTTPPatch(typeof(scrController), "PortalTravelAction")]
     public static class PortalTravelActionPatch
     {
-        public static void Postfix(int ___portalDestination)
+        public static bool Prefix(scrController __instance, int ___portalDestination)
         {
             if (___portalDestination != -2)
-                return;
+                return true;
             string current = Persistence.GetSavedCurrentLevel();
             if (current == "BackToThePast.OldXO.default")
             {
-                GCS.sceneToLoad = "scnEditor";
-                GCS.customLevelPaths = new string[1] { "BackToThePast.OldXO" };
-                GCS.speedTrialMode = false;
-                GCS.practiceMode = false;
-                GCS.standaloneLevelMode = true;
+                OldXOTweak.EnterLevel();
+                return false;
             }
             else if (current == "BackToThePast.OldXO.speedTrial")
             {
-                GCS.sceneToLoad = "scnEditor";
-                GCS.customLevelPaths = new string[1] { "BackToThePast.OldXO" };
-                GCS.speedTrialMode = true;
-                GCS.practiceMode = false;
-                GCS.standaloneLevelMode = true;
+                OldXOTweak.EnterLevel(true);
+                return false;
             }
+            return true;
         }
     }
 }
