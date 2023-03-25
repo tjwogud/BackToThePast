@@ -20,8 +20,6 @@ namespace BackToThePast.LegacyTwirl
             float num2 = 0f;
             if (__instance.floorRenderer is FloorSpriteRenderer)
             {
-                if (scrLevelMaker.instance.lm2 == null)
-                    __instance.printe("lm2 is null for " + __instance.name);
                 float num3 = scrLevelMaker.instance.lm2.BigTiles ? Mathf.PI / -2 : Mathf.PI / 2;
                 num2 = (float)(((scrMisc.mod((float)(__instance.exitangle - __instance.entryangle), Mathf.PI * 2) <= Mathf.PI) ? __instance.entryangle : __instance.exitangle) - num3);
             }

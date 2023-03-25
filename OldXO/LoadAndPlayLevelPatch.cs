@@ -16,7 +16,7 @@ namespace BackToThePast.OldXO
 			Resources.UnloadUnusedAssets();
 			__instance.isLoading = true;
 			__instance.levelPath = levelPath;
-            __instance.levelData.Decode(Main.old_xo, out _);
+            __instance.levelData.Decode(Main.oldXo, out _);
 			//__instance.levelData.backgroundSettings["showDefaultBGIfNoImage"] = ToggleBool.Disabled;
 			editor.filenameText.text = Path.GetFileName(levelPath);
 			editor.filenameText.fontStyle = FontStyle.Bold;
@@ -25,7 +25,7 @@ namespace BackToThePast.OldXO
 			__instance.UpdateFloorSprites();
 			__instance.SetBackground();
 			__instance.imgHolder.Unload(true);
-			scrConductor.instance.song.clip = Main.one_forgotten_night;
+			scrConductor.instance.song.clip = Main.oneForgottenNight;
 			DiscordController discordController = DiscordController.instance;
 			if (discordController != null)
 				discordController.UpdatePresence();

@@ -8,7 +8,7 @@ namespace BackToThePast.OldBackground
     {
         public static void SetBackground()
         {
-            if (scnLevelSelect.instance == null)
+            if (ADOBase.levelSelect == null)
                 return;
             GameObject bg = SceneManager.GetActiveScene().GetRootGameObjects().First(g => g.name == "BG");
             if (!bg)

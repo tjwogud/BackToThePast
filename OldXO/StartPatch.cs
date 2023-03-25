@@ -76,14 +76,19 @@ namespace BackToThePast.OldXO
                 floor.Set("oriScaleTopGlow", 0.32f / 4);
             }
 
-            List<scrPortal> portals = scrPortal.portals.ToList();
+            object portals = null;
+            if (typeof(scrPortal).Get("portals").GetType().FullName.Contains("List"))
+                portals = typeof(scrPortal).Get<List<scrPortal>>("portals").ToList();
+            oldXO.SetActive(false);
             scrPortal portalComp = Object.Instantiate(RDConstants.data.prefab_worldPortal, oldXO.transform).GetComponent<scrPortal>();
             portalComp.world = "BackToThePast.OldXO";
+            oldXO.SetActive(true);
             portalComp.transform.position = new Vector2(19, 29);
             Texture2D texture = Resources.Load<Texture2D>("portalimages/xo");
-            Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), portals[0].sprPortal.sprite.pixelsPerUnit);
+            Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), 24.4185f);
             portalComp.sprPortal.sprite = sprite;
-            scrPortal.portals = portals;
+            if (typeof(scrPortal).Get("portals").GetType().FullName.Contains("List"))
+                typeof(scrPortal).Set("portals", portals);
 
             Transform info = Object.Instantiate(((Component)Resources.FindObjectsOfTypeAll(typeof(scrGfxFloat)).First(comp => comp.name == "InfoXO")).transform.GetChild(0), oldXO.transform);
             info.localPosition = new Vector2(22, 28.5f);

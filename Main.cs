@@ -3,9 +3,9 @@ using BackToThePast.HideDifficulty;
 using BackToThePast.HideNoFail;
 using BackToThePast.LegacyCLS;
 using BackToThePast.LegacyEditorButtons;
-using BackToThePast.LegacyFont;
 using BackToThePast.OldBackground;
 using BackToThePast.Patch;
+using BackToThePast.Utils;
 using GDMiniJSON;
 using HarmonyLib;
 using Localizations;
@@ -13,6 +13,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityModManagerNet;
@@ -29,8 +31,16 @@ namespace BackToThePast
         public static Font oldGodoMaum;
         public static FontData legacyFont;
         public static FontData originFont;
-        public static Dictionary<string, object> old_xo;
-        public static AudioClip one_forgotten_night;
+        public static Dictionary<string, object> oldXo;
+        public static AudioClip oneForgottenNight;
+        public static Dictionary<string, object> xoLevelMeta = new Dictionary<string, object>()
+        {
+            { "index", 1972 },
+            { "levelCount", 1 },
+            { "speedTrial", 1.1f },
+            { "hasCheckpoints", false },
+            { "floorPos", new Vector2Int(19, 26) }
+        };
         public static bool lucky;
         public static readonly Type optionsPanelsCLS = typeof(ADOBase).Assembly.GetType("OptionsPanelsCLS");
         public static readonly Type option = typeof(ADOBase).Assembly.GetType("OptionsPanelsCLS+Option");
@@ -57,15 +67,28 @@ namespace BackToThePast
                 fontScale = 0.95f,
                 lineSpacing = 1.45f
             };
-            old_xo = (Dictionary<string, object>)Json.Deserialize(bundle.LoadAsset<TextAsset>("old_xo").text);
-            one_forgotten_night = bundle.LoadAsset<AudioClip>("One forgotten night");
+            oldXo = (Dictionary<string, object>)Json.Deserialize(bundle.LoadAsset<TextAsset>("old_xo").text);
+            oneForgottenNight = bundle.LoadAsset<AudioClip>("One forgotten night");
             Logger.Log("Load Completed!");
             Logger.Log("Initializing Patches...");
             BTTPPatch.Init();
+            Logger.Log("Completed!");
             Localization = Localization.Load("1QcrRL6LAs8WxJj_hFsEJa3CLM5g3e8Ya0KQlRKXwdlU", 343830105, modEntry);
             lucky = new System.Random().Next(20) == 0;
 
-            GCNS.worldData["BackToThePast.OldXO"] = new GCNS.WorldData(1972, 1, 1.1f, false, new Vector2Int(19, 26), new Vector2Int(19, 26));
+            object worldData;
+
+            ConstructorInfo dictConst = AccessTools.Constructor(Reflections.GetType("GCNS+WorldData"), new Type[] { typeof(Dictionary<string, object>) });
+            if (dictConst != null)
+            {
+                worldData = dictConst.Invoke(new object[] { xoLevelMeta });
+            }
+            else
+            {
+                worldData = AccessTools.GetDeclaredConstructors(Reflections.GetType("GCNS+WorldData"))[0].Invoke(new string[] { "index", "levelCount", "speedTrial", "hasCheckpoints", "floorPos", "floorPos" }.Select(s => xoLevelMeta[s]).ToArray());
+            }
+            object dict = typeof(GCNS).Get("worldData");
+            AccessTools.Property(dict.GetType(), "Item").SetValue(dict, worldData, new object[] { "BackToThePast.OldXO" });
         }
 
         private static bool OnToggle(UnityModManager.ModEntry modEntry, bool value)

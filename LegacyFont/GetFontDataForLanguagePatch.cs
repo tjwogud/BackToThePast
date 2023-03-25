@@ -13,7 +13,14 @@ namespace BackToThePast.LegacyFont
             if (Main.Settings.legacyFont)
                 __result = Main.legacyFont;
             else if (Main.Settings.oldGodoMaum && __result.font.name == RDConstants.data.latinFont.name)
-                __result.font = Main.oldGodoMaum;
+                __result = new FontData()
+                {
+                    font = Main.oldGodoMaum,
+                    fontScale = __result.fontScale,
+                    fontTMP = __result.fontTMP,
+                    lineSpacing = __result.lineSpacing,
+                    lineSpacingTMP = __result.lineSpacingTMP
+                };
         }
     }
 }

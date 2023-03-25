@@ -1,15 +1,17 @@
 ﻿using BackToThePast.Patch;
+using BackToThePast.Utils;
+using System;
 
 namespace BackToThePast.OldXO
 {
     [BTTPPatch(typeof(scrMistakesManager), "SaveCustom")]
     public static class SaveCustomPatch
     {
-        public static bool Prefix(scrMistakesManager __instance, bool wonLevel, float multiplier, ref EndLevelType __result)
+        public static bool Prefix(scrMistakesManager __instance, bool wonLevel, float multiplier, ref object __result)
         {
-            if (ADOBase.customLevel.levelPath != "BackToThePast.OldXO")
+            if (ADOBase.customLevel?.levelPath != null && ADOBase.customLevel.levelPath != "BackToThePast.OldXO")
                 return true;
-            __result = __instance.Save(1972, wonLevel, multiplier);
+            __result = __instance.Method("Save", new object[] { 1972, wonLevel, multiplier}, new Type[] { typeof(int), typeof(bool), typeof(float) });
             return false;
         }
     }
@@ -19,7 +21,7 @@ namespace BackToThePast.OldXO
     {
         public static bool Prefix(ref int __result)
         {
-            if (ADOBase.customLevel.levelPath != "BackToThePast.OldXO")
+            if (ADOBase.customLevel?.levelPath != null && ADOBase.customLevel.levelPath != "BackToThePast.OldXO")
                 return true;
             __result = Persistence.GetWorldAttempts(1972);
             return false;
@@ -31,7 +33,7 @@ namespace BackToThePast.OldXO
     {
         public static bool Prefix(int attempts)
         {
-            if (ADOBase.customLevel.levelPath != "BackToThePast.OldXO")
+            if (ADOBase.customLevel?.levelPath != null && ADOBase.customLevel.levelPath != "BackToThePast.OldXO")
                 return true;
             Persistence.SetWorldAttempts(1972, attempts);
             return false;
