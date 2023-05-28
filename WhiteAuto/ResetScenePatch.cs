@@ -2,7 +2,7 @@
 
 namespace BackToThePast.WhiteAuto
 {
-    [BTTPPatch(typeof(CustomLevel), "ResetScene")]
+    [BTTPPatch(typeof(scnGame), "ResetScene")]
     public static class ResetScenePatch
     {
         public static void Postfix()

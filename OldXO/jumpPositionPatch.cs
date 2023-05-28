@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace BackToThePast.OldXO
 {
-    [BTTPPatch(typeof(scrPortal), "jumpPosition", MethodType.Getter)]
+    [BTTPPatch(typeof(scrPortal), "get_jumpPosition")]
     public static class jumpPositionPatch
     {
         public static bool Prepare()

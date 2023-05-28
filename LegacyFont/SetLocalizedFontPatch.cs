@@ -1,10 +1,11 @@
 ﻿using BackToThePast.Patch;
 using BackToThePast.Utils;
+using System;
 using UnityEngine.UI;
 
 namespace BackToThePast.LegacyFont
 {
-    [BTTPPatch(typeof(RDString), "SetLocalizedFont", typeof(Text))]
+    [BTTPPatch(typeof(RDString), "SetLocalizedFont", new Type[] { typeof(Text) })]
     public static class SetLocalizedFontPatch
     {
         private static FontData prev;

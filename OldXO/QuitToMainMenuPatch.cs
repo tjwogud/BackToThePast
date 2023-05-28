@@ -7,7 +7,7 @@ namespace BackToThePast.OldXO
     {
         public static void Prefix()
         {
-            if (GCS.standaloneLevelMode && GCS.customLevelPaths != null && GCS.customLevelPaths.Length == 1 && GCS.customLevelPaths[0] == "BackToThePast.OldXO")
+            if (ADOBase.isScnGame && GCS.customLevelPaths != null && GCS.customLevelPaths.Length == 1 && GCS.customLevelPaths[0] == "BackToThePast.OldXO")
             {
                 GCS.customLevelPaths = null;
                 GCS.worldEntrance = "BackToThePast.SecretIsland";

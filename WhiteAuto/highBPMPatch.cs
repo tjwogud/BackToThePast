@@ -3,7 +3,7 @@ using HarmonyLib;
 
 namespace BackToThePast.WhiteAuto
 {
-    [BTTPPatch(typeof(scnEditor), "highBPM", MethodType.Getter)]
+    [BTTPPatch(typeof(scnEditor), "get_highBPM")]
     public static class highBPMPatch
     {
         public static void Postfix(ref bool __result)

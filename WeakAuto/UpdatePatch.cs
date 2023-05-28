@@ -12,7 +12,7 @@ namespace BackToThePast.WeakAuto
 
         public static void Postfix()
         {
-            RDC.useOldAuto = Main.Settings.weakAuto;
+            RDC.useOldAuto = true;
         }
     }
 }

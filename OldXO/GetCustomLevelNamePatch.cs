@@ -9,7 +9,7 @@ namespace BackToThePast.OldXO
         {
             if (path == "BackToThePast.OldXO")
             {
-                __result = CustomLevel.instance.levelData.fullCaption;
+                __result = scnGame.instance.levelData.fullCaption;
                 return false;
             }
             return true;

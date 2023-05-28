@@ -4,11 +4,11 @@
     {
         public static void EnterLevel(bool speedTrial = false, bool changeScene = true)
         {
-            GCS.sceneToLoad = "scnEditor";
+            GCS.sceneToLoad = "scnGame";
             GCS.customLevelPaths = new string[1] { "BackToThePast.OldXO" };
+            GCS.customLevelIndex = 0;
             GCS.speedTrialMode = speedTrial;
             GCS.practiceMode = false;
-            GCS.standaloneLevelMode = true;
             Persistence.SetSavedCurrentLevel("BackToThePast.OldXO." + (!speedTrial ? "default" : "speedTrial"));
             if (changeScene)
                 scrController.instance.StartLoadingScene();

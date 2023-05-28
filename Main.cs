@@ -171,7 +171,7 @@ namespace BackToThePast
                 GUILayout.BeginVertical();
                 ShowSetting(Settings.legacyResult, b => Settings.legacyResult = b, "legacyResult");
                 ShowSetting(Settings.noResult, b => Settings.noResult = b, "noResult");
-                if (scrController.instance != null && !scrController.instance.paused && scrController.isGameWorld)
+                if (scrController.instance != null && !scrController.instance.paused && scrController.instance.gameworld)
                 {
                     ShowDummySetting(Settings.hideDifficulty, "hideDifficulty");
                     ShowDummySetting(Settings.hideNoFail, "hideNoFail");
@@ -243,7 +243,7 @@ namespace BackToThePast
                 GUILayout.Space(15);
                 GUILayout.BeginVertical();
                 ShowSetting(Settings.space360Tile, b => Settings.space360Tile = b, "space360Tile");
-                ShowSetting(Settings.weakAuto, b => Settings.weakAuto = b, "weakAuto");
+                ShowSetting(Settings.weakAuto, b => Settings.weakAuto = b, "weakAuto", c => RDC.useOldAuto = c);
                 ShowSetting(Settings.whiteAuto, b => Settings.whiteAuto = b, "whiteAuto");
                 ShowSetting(Settings.legacyEditorButtonsPositions, b => Settings.legacyEditorButtonsPositions = b, "legacyEditorButtonsPositions", LegacyEditorButtonsTweak.ChangeEditorButtons);
                 ShowSetting(Settings.legacyEditorButtonsDesigns, b => Settings.legacyEditorButtonsDesigns = b, "legacyEditorButtonsDesigns", LegacyEditorButtonsTweak.RemoveShadowAddOutline);
