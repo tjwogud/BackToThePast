@@ -15,7 +15,7 @@ namespace BackToThePast.OldXO
     {
         public static void Postfix()
         {
-            if (Persistence.GetSavedCurrentLevel().StartsWith("BackToThePast.OldXO"))
+            if (Persistence.GetLastOpenedLevel().StartsWith("BackToThePast.OldXO"))
                 Object.FindObjectOfType<scrMenuContinueInfo>().GetComponent<Text>().text = $"({Main.Localization["bttp.oldxo.title"]})";
             GameObject oldXO = new GameObject("OldXO");
             for (int i = 0; i < 15; i++)

@@ -9,7 +9,8 @@
             GCS.customLevelIndex = 0;
             GCS.speedTrialMode = speedTrial;
             GCS.practiceMode = false;
-            Persistence.SetSavedCurrentLevel("BackToThePast.OldXO." + (!speedTrial ? "default" : "speedTrial"));
+            
+            Persistence.UpdateLastOpenedLevel("BackToThePast.OldXO." + (!speedTrial ? "default" : "speedTrial"));
             if (changeScene)
                 scrController.instance.StartLoadingScene();
         }

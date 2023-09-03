@@ -1,21 +1,40 @@
-﻿using UnityEngine;
+﻿using BackToThePast.Utils;
+using UnityEngine;
 
 namespace BackToThePast.HideAnnounceSign
 {
     public static class HideAnnounceSignTweak
     {
-        private static GameObject newsCache;
-
         public static void ToggleSign(bool show)
         {
-            GameObject obj = Object.FindObjectOfType<NewsSign>()?.gameObject;
-            if (obj)
+            NewsSign[] newsSigns = Object.FindObjectsOfType<NewsSign>();
+            foreach (NewsSign newsSign in newsSigns)
             {
-                obj.SetActive(show);
-                newsCache = obj;
+                if (newsSign)
+                {
+                    SpriteRenderer[] renderers = newsSign.Get<SpriteRenderer[]>("spriteRenderers");
+                    if (show)
+                    {
+                        newsSign.text.enabled = true;
+                        newsSign.loadingIcon.enabled = true;
+                        if (renderers != null)
+                            foreach (SpriteRenderer renderer in renderers)
+                            {
+                                renderer.enabled = true;
+                            }
+                    }
+                    else
+                    {
+                        newsSign.text.enabled = false;
+                        newsSign.loadingIcon.enabled = false;
+                        if (renderers != null)
+                            foreach (SpriteRenderer renderer in renderers)
+                            {
+                                renderer.enabled = false;
+                            }
+                    }
+                }
             }
-            else if (newsCache)
-                newsCache.SetActive(show);
         }
     }
 }

@@ -9,7 +9,7 @@ namespace BackToThePast.OldXO
         {
             if (___portalDestination != -2)
                 return true;
-            string current = Persistence.GetSavedCurrentLevel();
+            string current = Persistence.GetLastOpenedLevel();
             if (current == "BackToThePast.OldXO.default")
             {
                 OldXOTweak.EnterLevel();

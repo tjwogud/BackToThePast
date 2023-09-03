@@ -20,9 +20,9 @@ namespace BackToThePast.Patch
 				return;
             Assembly.GetExecutingAssembly().GetTypes().Where(type =>
 			{
-				if (type.GetCustomAttribute<BTTPPatchAttribute>() == null)
+				if (type.GetCustomAttributes<BTTPPatchAttribute>().Count() == 0)
 					return false;
-				if (type.GetCustomAttribute<IgnoreSettingAttribute>() == null)
+				if (type.GetCustomAttributes<IgnoreSettingAttribute>().Count() == 0)
 					return true;
 				ignoreSettingPatches.Add((type, false));
 				return false;
