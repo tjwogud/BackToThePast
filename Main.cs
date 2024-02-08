@@ -350,7 +350,6 @@ namespace BackToThePast
                         fontChanged = 0;
                         RDString.initialized = false;
                         RDString.Setup();
-                        Persistence.Save();
                         ADOBase.RestartScene();
                     }
                 }
