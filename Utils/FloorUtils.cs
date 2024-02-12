@@ -6,47 +6,48 @@ namespace BackToThePast.Utils
 {
     public static class FloorUtils
     {
-        public static Color DefaultColor => new Color(0.78f, 0.78f, 0.886f);
-
         public static scrFloor AddFloor(float x, float y, Transform parent = null)
         {
-            var obj = Object.Instantiate(GetFloorGameObjectAt(1, 0).GetComponent<scrFloor>(), parent);
+            var obj = CreateFloor(parent);
             obj.transform.position = new Vector3(x, y);
-            //scrController.instance.lm.listFloors.Add(obj);
             return obj;
         }
 
-        public static scrFloor AddFloorAt(float floorX, float floorY, float x, float y, Transform parent = null)
+        public static scrFloor AddEventFloor(float x, float y, QuickAction action, bool gem, Transform parent = null)
         {
-            var floor = GetFloorGameObjectAt(floorX, floorY);
-            if (floor == null || !floor.GetComponent<scrFloor>())
-                return null;
-            var obj = Object.Instantiate(floor, parent);
-            obj.transform.position = new Vector3(x, y);
-            //scrController.instance.lm.listFloors.Add(obj);
-            return obj.GetComponent<scrFloor>();
-        }
-
-        public static scrFloor AddEventFloor(float floorX, float floorY, float x, float y, QuickAction action, Transform parent = null)
-        {
-            var obj = AddFloorAt(floorX, floorY, x, y, parent);
-            if (!obj)
-                return null;
-            obj.GetComponent<scrGem>().Method("LocalRotate");
-            Object.Destroy(obj.GetComponent<scrGem>());
-            Object.Destroy(obj.GetComponent<ffxCallFunction>());
-            Object.Destroy(obj.GetComponent<scrMenuMovingFloor>());
-            obj.tag = "";
-            var func = obj.gameObject.AddComponent<ffxCallFunction>();
-            func.ue = new QuickEvent();
-            func.ue.persistentCalls = new QuickPersistentCallGroup();
+            scrFloor obj;
+            if (gem)
+            {
+                GameObject origin = GameObject.Find("Floors").transform.Find("Grid").Find("outer ring").Find("ChangingRoomGem").Find("MovingGem").gameObject;
+                obj = Object.Instantiate(origin, parent).GetComponent<scrFloor>();
+                obj.transform.position = new Vector3(x, y);
+                Object.Destroy(obj.GetComponent<scrDisableIfWorldNotComplete>());
+                Object.Destroy(obj.GetComponent<scrMenuMovingFloor>());
+                scrGem scrGem = obj.gameObject.GetComponent<scrGem>();
+                scrGem.startPosition = scrGem.endPosition = null;
+                obj.gameObject.SetActive(true);
+            }
+            else
+            {
+                obj = AddFloor(x, y, parent);
+                if (!obj)
+                    return null;
+            }
+            var func = obj.gameObject.GetOrAddComponent<ffxCallFunction>();
+            if (func.ue == null)
+            {
+                func.ue = new QuickEvent();
+                func.ue.persistentCalls = new QuickPersistentCallGroup();
+            }
+            func.ue.RemoveAllListeners();
             func.ue.AddListener(action);
+            func.enabled = true;
             return obj;
         }
 
-        public static scrFloor AddTeleportFloor(float floorX, float floorY, float x, float y, float targetX, float targetY, float cameraX, float cameraY, bool cameraMoving = true, PositionState state = PositionState.None, QuickAction action1 = null, QuickAction action2 = null, Transform parent = null)
+        public static scrFloor AddTeleportFloor(float x, float y, float targetX, float targetY, float cameraX, float cameraY, bool cameraMoving = true, PositionState state = PositionState.None, QuickAction action1 = null, QuickAction action2 = null, Transform parent = null)
         {
-            return AddEventFloor(floorX, floorY, x, y, delegate
+            return AddEventFloor(x, y, delegate
             {
                 if (action1 != null)
                     action1.Invoke();
@@ -65,6 +66,11 @@ namespace BackToThePast.Utils
                     scrController.instance.chosenplanet.currfloor = component;
                 });
             }, parent);
+        }
+
+        public static scrFloor CreateFloor(Transform parent = null)
+        {
+            return Object.Instantiate(PrefabLibrary.instance.scnLevelSelectFloorPrefab.gameObject, parent).GetComponent<scrFloor>();
         }
 
         public static GameObject GetFloorGameObjectAt(float x, float y)
