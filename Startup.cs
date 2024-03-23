@@ -10,7 +10,7 @@ using TinyJson;
 using UnityEngine;
 using UnityModManagerNet;
 
-namespace MagicShapeMultiply
+namespace BackToThePast
 {
     public static class Startup
     {
