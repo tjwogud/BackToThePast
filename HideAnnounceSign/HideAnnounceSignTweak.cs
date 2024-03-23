@@ -1,5 +1,6 @@
 ﻿using BackToThePast.Utils;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace BackToThePast.HideAnnounceSign
 {
@@ -12,27 +13,15 @@ namespace BackToThePast.HideAnnounceSign
             {
                 if (newsSign)
                 {
+                    if (!newsSign.button.button)
+                        newsSign.button.button = newsSign.button.GetComponent<Button>();
+                    newsSign.button.transform.parent.gameObject.SetActive(show);
                     SpriteRenderer[] renderers = newsSign.Get<SpriteRenderer[]>("spriteRenderers");
-                    if (show)
-                    {
-                        newsSign.text.enabled = true;
-                        newsSign.loadingIcon.enabled = true;
-                        if (renderers != null)
-                            foreach (SpriteRenderer renderer in renderers)
-                            {
-                                renderer.enabled = true;
-                            }
-                    }
-                    else
-                    {
-                        newsSign.text.enabled = false;
-                        newsSign.loadingIcon.enabled = false;
-                        if (renderers != null)
-                            foreach (SpriteRenderer renderer in renderers)
-                            {
-                                renderer.enabled = false;
-                            }
-                    }
+                    if (renderers != null)
+                        foreach (SpriteRenderer renderer in renderers)
+                        {
+                            renderer.enabled = show;
+                        }
                 }
             }
         }
