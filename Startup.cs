@@ -1,7 +1,6 @@
 ﻿using BackToThePast.Utils;
 using HarmonyLib;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
@@ -11,7 +10,7 @@ using TinyJson;
 using UnityEngine;
 using UnityModManagerNet;
 
-namespace BackToThePast
+namespace MagicShapeMultiply
 {
     public static class Startup
     {
@@ -40,7 +39,7 @@ namespace BackToThePast
                 if (info == null)
                     continue;
                 UnityModManager.ModInfo modInfo = File.ReadAllText(info).FromJson<UnityModManager.ModInfo>();
-                if (!File.Exists(Path.Combine(path, modInfo.AssemblyName)))
+                if (!File.Exists(Path.Combine(path, modInfo.AssemblyName ?? modInfo.Id)))
                     continue;
                 installeds[modInfo.Id] = UnityModManager.ParseVersion(modInfo.Version);
             }
